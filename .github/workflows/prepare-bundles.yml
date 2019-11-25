@@ -21,8 +21,8 @@ jobs:
           author_name: Prepare bundles GitHub action
           author_email: actions@noreply.github.com
           message: "Prepare bundles"
-          path: "."
-          pattern: "*.*"
-          force: false
+          #path: "."
+          #pattern: "*.*"
+          #force: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
