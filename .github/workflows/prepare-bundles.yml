@@ -9,7 +9,8 @@ jobs:
     steps:
       - uses: actions/checkout@v1
         with:
+          # Checkout branch instead of a commit SHA.
           ref: ${{ github.ref }}
 #      - uses: ./.github/actions/prepare-bundles
-      - name: Run a one-line script
-        run: echo Hello, world!
+      - name: git status
+        run: git status
