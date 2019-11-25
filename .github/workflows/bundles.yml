@@ -1,5 +1,7 @@
-name: bundles
-on: [push]
+name: Prepare bundles
+push:
+#  paths:
+#    - 'catalog/*'
 jobs:
   build:
     runs-on: ubuntu-latest
