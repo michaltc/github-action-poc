@@ -21,8 +21,11 @@ jobs:
           author_name: Prepare bundles GitHub action
           author_email: actions@noreply.github.com
           message: "Prepare bundles"
-          #path: "."
+          path: "generated"
           #pattern: "*.*"
           #force: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+#      - name: Commit changes
+#        uses: cds-snc/github-actions/auto-commit@master
