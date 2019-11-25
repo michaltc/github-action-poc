@@ -11,15 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-#        with:
-#          # Checkout branch instead of a commit SHA.
-#          ref: ${{ github.ref }}
+
 #      - uses: ./.github/actions/prepare-bundles
-      - name: git status
-        run: git status
-      - name: Generate bundles.json
-        run: |
-          mkdir -p generated
-          echo "{ \"date\": \"`date`\" }" > generated/bundles.json
-          git commit -a -m 'Generate bundles.json'
-          git push
+
+      # https://github.com/EndBug/add-and-commit
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v2.1.0
+        with:
+          author_name: Prepare bundles GitHub action
+          author_email: actions@noreply.github.com
+          message: "Prepare bundles"
+          path: "."
+          pattern: "*.*"
+          force: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
