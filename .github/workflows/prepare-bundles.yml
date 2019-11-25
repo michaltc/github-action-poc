@@ -1,11 +1,11 @@
 name: Prepare bundles
 on:
   push:
-    branches:
-      - '*'
-    paths:
-      - 'catalog/*'
-      - '.github/*'
+#    branches:
+#      - '*'
+#    paths:
+#      - 'catalog/*'
+#      - '.github/*'
 jobs:
   build:
     runs-on: ubuntu-latest
