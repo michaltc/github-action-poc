@@ -1,0 +1,9 @@
+{
+  "serviceName": "ServiceNow",
+  "vendor": "Citrix",
+  "id": "2",
+  "version": "0.0.1",
+  "category": "demo",
+  "exportedTime": 1574674488,
+  "description": "ServiceNow lorem ipsum dolor sit amet."
+}
