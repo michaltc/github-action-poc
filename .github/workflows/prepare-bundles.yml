@@ -1,16 +1,23 @@
 name: Prepare bundles
 on:
   push:
-#     paths:
-#       - 'catalog/*'
+    paths:
+      - 'catalog/*'
+      - '.github/*'
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-        with:
-          # Checkout branch instead of a commit SHA.
-          ref: ${{ github.ref }}
+#        with:
+#          # Checkout branch instead of a commit SHA.
+#          ref: ${{ github.ref }}
 #      - uses: ./.github/actions/prepare-bundles
       - name: git status
         run: git status
+      - name: Generate bundles.json
+        run: |
+          mkdir -p generated
+          echo "{ \"date\": \"`date`\" }" > generated/bundles.json
+          git commit -a -m 'Generate bundles.json'
+          git push
