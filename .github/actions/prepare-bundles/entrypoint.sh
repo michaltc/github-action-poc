@@ -1,5 +1,5 @@
 #!/bin/sh
 set -eu
 
-mkdir -p "${output_directory}"
-date > "${output_directory}"/timestamp.txt
+mkdir -p "${INPUT_OUTPUT_DIRECTORY}"
+date > "${INPUT_OUTPUT_DIRECTORY}"/timestamp.txt
