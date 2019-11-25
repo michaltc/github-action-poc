@@ -12,7 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-#      - uses: ./.github/actions/prepare-bundles
+      - name: Prepare bundles
+        uses: ./.github/actions/prepare-bundles
+        with:
+          output_directory: "./generated"
 
       # https://github.com/EndBug/add-and-commit
       - name: Commit changes
@@ -26,6 +29,3 @@ jobs:
           #force: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-#      - name: Commit changes
-#        uses: cds-snc/github-actions/auto-commit@master

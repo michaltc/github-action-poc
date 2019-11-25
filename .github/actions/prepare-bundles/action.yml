@@ -1,0 +1,17 @@
+name: "Prepare bundles"
+description: "Validate bundles and generate output files based on them."
+
+runs:
+  using: "docker"
+  image: "Dockerfile"
+
+inputs:
+  output_directory:
+    description: "Directory with the generated files"
+    required: true
+    default: "./generated"
+
+branding:
+  icon: "git-commit"
+  color: blue
+
