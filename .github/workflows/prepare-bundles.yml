@@ -5,16 +5,17 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v1
+      - name: Code checkout
+        uses: actions/checkout@v1
 
       - name: Build bundlegen
-        run: cd bundlegen && mvn package
+        run: cd bundlegen && mvn --no-transfer-progress package
 
       - name: Execute bundlegen
-        run: cd bundlegen && mvn exec:java -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain"
+        run: cd bundlegen && mvn --no-transfer-progress exec:java -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain"
 
       # https://github.com/EndBug/add-and-commit
-      - name: Commit changes
+      - name: Commit generated files
         uses: EndBug/add-and-commit@v2.1.0
         with:
           message: "Prepare bundles"
