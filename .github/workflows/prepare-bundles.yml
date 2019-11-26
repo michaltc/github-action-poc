@@ -1,11 +1,6 @@
 name: Prepare bundles
 on:
   push:
-#    branches:
-#      - '*'
-#    paths:
-#      - 'bundles/*'
-#      - '.github/*'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,6 +11,9 @@ jobs:
         uses: ./.github/actions/build-bundles
         with:
           output_path: "./dist"
+
+      - shell: bash
+        run: python --version
 
       # https://github.com/EndBug/add-and-commit
       - name: Commit changes
