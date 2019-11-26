@@ -6,7 +6,7 @@ runs:
   image: "Dockerfile"
 
 inputs:
-  output_directory:
+  output_path:
     description: "Output directory with the generated files"
     required: true
     default: "./generated"

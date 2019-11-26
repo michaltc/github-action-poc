@@ -15,7 +15,7 @@ jobs:
       - name: Prepare bundles
         uses: ./.github/actions/build-bundles
         with:
-          output_directory: "./generated"
+          output_path: "./generated"
 
       # https://github.com/EndBug/add-and-commit
       - name: Commit changes
