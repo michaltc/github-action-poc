@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Prepare bundles
+      - name: Build bundles
         uses: ./.github/actions/build-bundles
         with:
           output_path: "./generated"
