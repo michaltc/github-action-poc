@@ -8,6 +8,14 @@ jobs:
       - name: Code checkout
         uses: actions/checkout@v1
 
+      - name: Maven modules cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
       - name: Build bundlegen
         run: cd bundlegen && mvn --batch-mode package
 
