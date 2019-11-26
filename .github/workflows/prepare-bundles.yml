@@ -7,13 +7,16 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Build bundles
-        uses: ./.github/actions/build-bundles
-        with:
-          output_path: "./dist"
+#      - name: Build bundles
+#        uses: ./.github/actions/build-bundles
+#        with:
+#          output_path: "./dist"
 
       - shell: bash
         run: python --version
+
+      - shell: bash
+        run: python3 --version
 
       # https://github.com/EndBug/add-and-commit
       - name: Commit changes
