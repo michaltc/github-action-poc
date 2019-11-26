@@ -9,10 +9,10 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Build bundlegen
-        run: cd bundlegen && mvn --no-transfer-progress package
+        run: cd bundlegen && mvn --batch-mode package
 
       - name: Execute bundlegen
-        run: cd bundlegen && mvn --no-transfer-progress exec:java -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain"
+        run: cd bundlegen && mvn --batch-mode exec:java -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain"
 
       # https://github.com/EndBug/add-and-commit
       - name: Commit generated files
