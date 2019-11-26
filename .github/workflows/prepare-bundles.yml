@@ -15,14 +15,14 @@ jobs:
       - name: Build bundles
         uses: ./.github/actions/build-bundles
         with:
-          output_path: "./generated"
+          output_path: "./dist"
 
       # https://github.com/EndBug/add-and-commit
       - name: Commit changes
         uses: EndBug/add-and-commit@v2.1.0
         with:
           message: "Prepare bundles"
-          path: "./generated"
+          path: "./dist"
           #pattern: "*.*"
           #force: false
         env:

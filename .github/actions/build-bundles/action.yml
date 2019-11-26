@@ -9,7 +9,7 @@ inputs:
   output_path:
     description: "Output directory with the generated files"
     required: true
-    default: "./generated"
+    default: "./dist"
 
 branding:
   icon: "git-commit"
