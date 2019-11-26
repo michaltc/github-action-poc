@@ -3,20 +3,15 @@ on:
   push:
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v1
 
-#      - name: Build bundles
-#        uses: ./.github/actions/build-bundles
-#        with:
-#          output_path: "./dist"
-
-      - shell: bash
-        run: python --version
-
-      - shell: bash
-        run: python3 --version
+      - name: Build and execute bundlegen
+        run: |
+          pushd bundlegen
+          mvn clean package exec:java -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain"
+          popd
 
       # https://github.com/EndBug/add-and-commit
       - name: Commit changes
