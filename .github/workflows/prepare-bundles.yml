@@ -7,11 +7,11 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Build and execute bundlegen
-        run: |
-          pushd bundlegen
-          mvn clean package exec:java -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain"
-          popd
+      - name: Build bundlegen
+        run: cd bundlegen && mvn package
+
+      - name: Execute bundlegen
+        run: cd bundlegen && mvn exec:java -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain"
 
       # https://github.com/EndBug/add-and-commit
       - name: Commit changes
