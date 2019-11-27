@@ -17,18 +17,16 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Build bundlegen
-        run: cd bundlegen && mvn --batch-mode package
+        run: mvn --batch-mode clean package
 
       - name: Execute bundlegen
-        run: cd bundlegen && mvn --batch-mode exec:java -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain"
+        run: mvn --batch-mode exec:java -pl bundlegen -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain" -Dexec.args="bundles bundles_dist"
 
       # https://github.com/EndBug/add-and-commit
       - name: Commit generated files
         uses: EndBug/add-and-commit@v2.1.0
         with:
           message: "Prepare bundles"
-          path: "./dist"
-          #pattern: "*.*"
-          #force: false
+          path: "./bundles_dist"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
