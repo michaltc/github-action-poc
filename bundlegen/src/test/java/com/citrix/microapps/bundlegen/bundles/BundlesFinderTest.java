@@ -15,10 +15,10 @@ import static com.citrix.microapps.bundlegen.TestUtils.path;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FindBundlesTest {
+class BundlesFinderTest {
     @Test
     void findBundles() {
-        List<FsBundle> actual = new FindBundles()
+        List<FsBundle> actual = new BundlesFinder()
                 .findBundles(path("src/test/resources/bundles"))
                 .sorted(Comparator.comparing(FsBundle::getPath))
                 .collect(Collectors.toList());
@@ -36,7 +36,7 @@ class FindBundlesTest {
     @Test
     @SuppressWarnings("ResultOfMethodCallIgnored")  // Streams are lazily evaluated, .collect() is needed
     void unexpectedFile() {
-        Stream<FsBundle> bundles = new FindBundles().findBundles(path("src/test/resources/bundles_unexpected_file"));
+        Stream<FsBundle> bundles = new BundlesFinder().findBundles(path("src/test/resources/bundles_unexpected_file"));
         assertThatThrownBy(() -> bundles.collect(Collectors.toList()))
                 .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("Path is not a directory: ");
@@ -44,7 +44,7 @@ class FindBundlesTest {
 
     @Test
     void directoryDoesNotExist() {
-        assertThatThrownBy(() -> new FindBundles().findBundles(path("this/path/does/not/exist")))
+        assertThatThrownBy(() -> new BundlesFinder().findBundles(path("this/path/does/not/exist")))
                 .isInstanceOf(UncheckedIOException.class)
                 .hasMessageContaining("Listing of directory failed: ");
     }

@@ -21,7 +21,7 @@ import com.citrix.microapps.bundlegen.ValidationException;
  *      - bundle
  * </pre>
  */
-public class FindBundles {
+public class BundlesFinder {
     public Stream<FsBundle> findBundles(Path rootDirectory) {
         return listDirectSubdirectories(rootDirectory)    // vendors
                 .flatMap(this::listDirectSubdirectories)  // bundle IDs

@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.citrix.microapps.bundlegen.bundles.FindBundles;
+import com.citrix.microapps.bundlegen.bundles.BundlesFinder;
 
 /**
  * Application runner with `main()`.
@@ -19,19 +19,25 @@ class BundlegenMain {
 
         Path bundlesDir = Paths.get(args[0]);
         Path distDir = Paths.get(args[1]);
+        Path archivesDir = distDir.resolve("archives");
 
         if (!Files.isDirectory(bundlesDir) || !Files.isReadable(bundlesDir)) {
             throw new ValidationException("Input path with bundles does not exist or is not a readable directory: " + bundlesDir);
         }
 
-        try {
-            Files.createDirectories(distDir);
-        } catch (IOException e) {
-            throw new ValidationException("Creation of output directory failed: " + distDir, e);
-        }
+        createDirectories(distDir);
+        createDirectories(archivesDir);
 
-        new FindBundles()
+        new BundlesFinder()
                 .findBundles(bundlesDir)
                 .forEach(bundle -> System.out.println("Bundle: " + bundle));
+    }
+
+    private static void createDirectories(Path directory) {
+        try {
+            Files.createDirectories(directory);
+        } catch (IOException e) {
+            throw new ValidationException("Creation of directory failed: " + directory, e);
+        }
     }
 }

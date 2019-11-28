@@ -3,6 +3,8 @@ package com.citrix.microapps.bundlegen.bundles;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,14 +13,18 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import static com.citrix.microapps.bundlegen.TestUtils.path;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class BundleArchiveTest {
+class ArchiveBuilderTest {
+    private static final FsBundle TEST_BUNDLE = new FsBundle(path("src/test/resources/bundles/vendor1/bundle1"));
+
     private List<String> listEntriesInZip(byte[] content) throws IOException {
         List<String> result = new ArrayList<>();
 
@@ -33,11 +39,10 @@ class BundleArchiveTest {
         return result;
     }
 
-    @Test
-    void buildArchive() {
-        FsBundle bundle = new FsBundle(path("src/test/resources/bundles/vendor1/bundle1"));
-        byte[] content = new BundleArchive().buildArchive(bundle);
-
+    /**
+     * @see #TEST_BUNDLE
+     */
+    private void assertContent(byte[] content) {
         byte[] expectedChecksum = new byte[] {
                 -102, 91, -81, 124, -75, -67, -58, -75,
                 -52, 11, 79, 42, 55, -69, -47, -96};
@@ -61,11 +66,36 @@ class BundleArchiveTest {
     }
 
     @Test
+    void buildArchive() {
+        byte[] content = new ArchiveBuilder().buildArchive(TEST_BUNDLE);
+        assertContent(content);
+    }
+
+    @Test
     void directoryDoesNotExist() {
         FsBundle bundle = new FsBundle(path("this/path/does/not/exist"));
 
-        assertThatThrownBy(() -> new BundleArchive().buildArchive(bundle))
+        assertThatThrownBy(() -> new ArchiveBuilder().buildArchive(bundle))
                 .isInstanceOf(UncheckedIOException.class)
                 .hasMessageContaining("Creation of zip archive failed: ");
+    }
+
+    @Test
+    void buildAndStore(@TempDir Path tempDir) throws IOException {
+        Path path = ArchiveBuilder.buildAndStore(tempDir, TEST_BUNDLE);
+
+        assertEquals(tempDir.resolve("vendor1").resolve("vendor1_bundle1.zip"), path);
+        assertTrue(Files.exists(path), "Path should exist: " + path);
+
+        byte[] content = Files.readAllBytes(path);
+        assertContent(content);
+    }
+
+    @Test
+    void overwriteExisting(@TempDir Path tempDir) throws IOException {
+        // No exception should occur if the file is already there.
+        buildAndStore(tempDir);
+        buildAndStore(tempDir);
+        buildAndStore(tempDir);
     }
 }

@@ -11,13 +11,22 @@ import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+
 /**
  * Builder of zip archive with bundle. Produce always exactly same zip on byte level for the same input, any difference
  * would cause unwanted growing of git repository with archives, invalidating of possible HTTP proxy caches in CDN,
  * files re-downloading, etc.
  */
-public class BundleArchive {
+public class ArchiveBuilder {
     private static final FileTime EPOCH = FileTime.fromMillis(0);
+
+    public static Path buildAndStore(Path archivesDir, FsBundle bundle) {
+        ArchiveBuilder builder = new ArchiveBuilder();
+        byte[] content = builder.buildArchive(bundle);
+        return builder.storeArchive(archivesDir, bundle, content);
+    }
 
     /**
      * Build zip archive with all the files of the bundle.
@@ -48,12 +57,41 @@ public class BundleArchive {
         }
     }
 
+    /**
+     * Store bundle archive to the file system on path like `archivesDir/vendor/vendor_bundleID.zip`.
+     * <p>
+     * Each bundle is stored always to the same location which effectively overwrites its previous version on update.
+     * Don't use anything like MD5 or timestamp in the path.
+     * <p>
+     * Expecting no `firstLetter/secondLetter/thirdLetter` subdirectories are needed. `vendor` subdirectory should be
+     * enough to have max. tens or small hundreds of directories/files per directory on any level.
+     *
+     * @param archivesDir top level directory for all archives
+     * @param bundle      bundle to store
+     * @param content     content of the bundle archive
+     * @return file system path to the created archive
+     */
+    public Path storeArchive(Path archivesDir, FsBundle bundle, byte[] content) {
+        Path archivePath = bundle.getArchivePath(archivesDir);
+
+        try {
+            Files.createDirectories(archivePath.getParent());
+            Files.write(archivePath, content, CREATE, TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            throw new UncheckedIOException("Storing of zip archive to file system failed: " + archivePath, e);
+        }
+
+        return archivePath;
+    }
+
     private void addToArchive(ZipOutputStream zipStream, String archiveName, Path topDirectory, Path file) {
         try {
             String relativePath = archiveName + "/" + topDirectory.relativize(file);
 
-            // Git unfortunately doesn't preserve the times, it uses current time on clone (experimentally verified).
-            // Current time would be used in ZIP if the times were not defined, see putNextEntry().
+            // Git unfortunately doesn't preserve the times, it uses current time on checkout of every file it modifies.
+            // Current time would be used in zip if the times were not defined, see putNextEntry(). `git log` can be
+            // used to get the timestamps if really needed.
+            // https://git.wiki.kernel.org/index.php/GitFaq#Why_isn.27t_Git_preserving_modification_time_on_files.3F
             ZipEntry entry = new ZipEntry(relativePath)
                     .setCreationTime(EPOCH)
                     .setLastAccessTime(EPOCH)

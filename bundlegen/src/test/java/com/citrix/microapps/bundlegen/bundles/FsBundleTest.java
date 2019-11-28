@@ -13,14 +13,16 @@ class FsBundleTest {
     @Test
     void getters() {
         Path path = Paths.get("test", "vendor", "id");
-        FsBundle fsBundle = new FsBundle(path);
+        FsBundle bundle = new FsBundle(path);
 
         assertAll(
-                () -> assertSame(path, fsBundle.getPath()),
-                () -> assertEquals("vendor", fsBundle.getVendor()),
-                () -> assertEquals("id", fsBundle.getId()),
-                () -> assertEquals("vendor_id", fsBundle.getArchiveName()),
-                () -> assertEquals("test/vendor/id", fsBundle.toString())
+                () -> assertSame(path, bundle.getPath()),
+                () -> assertEquals("vendor", bundle.getVendor()),
+                () -> assertEquals("id", bundle.getId()),
+                () -> assertEquals("vendor_id", bundle.getArchiveName()),
+                () -> assertEquals(Paths.get("somewhere/archives/vendor/vendor_id.zip"),
+                        bundle.getArchivePath(Paths.get("somewhere", "archives"))),
+                () -> assertEquals("test/vendor/id", bundle.toString())
         );
     }
 }

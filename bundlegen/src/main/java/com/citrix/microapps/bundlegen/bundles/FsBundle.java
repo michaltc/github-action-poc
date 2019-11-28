@@ -8,6 +8,8 @@ import java.nio.file.Path;
  * The structure of directories is `.../vendor/id/`.
  */
 public class FsBundle {
+    private static final String ARCHIVE_EXTENSION = ".zip";
+
     private final Path path;
 
     public FsBundle(Path path) {
@@ -28,6 +30,12 @@ public class FsBundle {
 
     public String getArchiveName() {
         return getVendor() + "_" + getId();
+    }
+
+    public Path getArchivePath(Path archivesDir) {
+        return archivesDir
+                .resolve(getVendor())
+                .resolve(getArchiveName() + ARCHIVE_EXTENSION);
     }
 
     @Override
