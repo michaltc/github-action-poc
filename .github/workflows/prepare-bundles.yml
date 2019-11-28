@@ -15,8 +15,8 @@ jobs:
       - name: Checkout destination repository
         uses: actions/checkout@v1
         with:
-          repository: ${{ DEST_REPO_FULL }}
-          ref: ${{ DEST_REPO_BRANCH }}
+          repository: ${{ env.DEST_REPO_FULL }}
+          ref: ${{ env.DEST_REPO_BRANCH }}
 
       - name: Maven modules cache
         uses: actions/cache@v1
@@ -35,8 +35,8 @@ jobs:
       - name: Test
         run: |
           pwd
-          echo $GITHUB_REF
-          ls -la ../${{ DEST_REPO }}
+          echo ${{ env.GITHUB_REF }}
+          ls -la ../${{ env.DEST_REPO }}
 
 #      # https://github.com/EndBug/add-and-commit
 #      - name: Commit generated files
