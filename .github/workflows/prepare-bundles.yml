@@ -1,6 +1,10 @@
 name: Prepare bundles
 on:
   push:
+env:
+  DEST_REPO: workspace-microapps-bundles
+  DEST_REPO_FULL: michaltc/workspace-microapps-bundles
+  DEST_REPO_BRANCH: refs/heads/master
 jobs:
   build:
     runs-on: ubuntu-18.04
@@ -11,9 +15,8 @@ jobs:
       - name: Checkout destination repository
         uses: actions/checkout@v1
         with:
-          repository: michaltc/workspace-microapps-bundles
-          ref: refs/heads/master
-          # token: ${{ secrets.GitHub_PAT }}
+          repository: ${{ DEST_REPO_FULL }}
+          ref: ${{ DEST_REPO_BRANCH }}
 
       - name: Maven modules cache
         uses: actions/cache@v1
@@ -28,6 +31,12 @@ jobs:
 
       - name: Execute bundlegen
         run: mvn --batch-mode exec:java -pl bundlegen -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain" -Dexec.args="bundles bundles_dist"
+
+      - name: Test
+        run: |
+          pwd
+          echo $GITHUB_REF
+          ls -la ../${{ DEST_REPO }}
 
 #      # https://github.com/EndBug/add-and-commit
 #      - name: Commit generated files
