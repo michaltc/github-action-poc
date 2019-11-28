@@ -1,5 +1,4 @@
-GitHub action POC
-=================
+Citrix Workspace Microapps
+==========================
 
-Proof of concept for preparing bundles and cumulated bundles JSON using GitHub actions.
-
+Catalog of Microapp bundles for Citrix Workspace.
