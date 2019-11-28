@@ -5,8 +5,15 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     steps:
-      - name: Code checkout
+      - name: Checkout source repository
         uses: actions/checkout@v1
+
+      - name: Checkout destination repository
+      - uses: actions/checkout@v1
+        with:
+          repository: michaltc/workspace-microapps-bundles
+          ref: refs/heads/master
+          # token: ${{ secrets.GitHub_PAT }}
 
       - name: Maven modules cache
         uses: actions/cache@v1
@@ -22,11 +29,11 @@ jobs:
       - name: Execute bundlegen
         run: mvn --batch-mode exec:java -pl bundlegen -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain" -Dexec.args="bundles bundles_dist"
 
-      # https://github.com/EndBug/add-and-commit
-      - name: Commit generated files
-        uses: EndBug/add-and-commit@v2.1.0
-        with:
-          message: "Prepare bundles"
-          path: "./bundles_dist"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      # https://github.com/EndBug/add-and-commit
+#      - name: Commit generated files
+#        uses: EndBug/add-and-commit@v2.1.0
+#        with:
+#          message: "Prepare bundles"
+#          path: "./bundles_dist"
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
