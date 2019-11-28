@@ -30,14 +30,11 @@ jobs:
         run: mvn --batch-mode clean package
 
       - name: Execute bundlegen
-        run: mvn --batch-mode exec:java -pl bundlegen -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain" -Dexec.args="bundles bundles_dist"
-
-      - name: Test
         run: |
-          set -ex
-          pwd
-          echo $GITHUB_REF
-          ls -la ../${{ env.DEST_REPO }}
+          set -x
+          branch=$(echo $GITHUB_REF | sed 's%^refs/heads/%%' | sed 's%[^-a-zA-Z0-9]%_%g')
+          args="bundles ../$DEST_REPO/$branch"
+          mvn --batch-mode exec:java -pl bundlegen -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain" -Dexec.args="$args"
 
 #      # https://github.com/EndBug/add-and-commit
 #      - name: Commit generated files
