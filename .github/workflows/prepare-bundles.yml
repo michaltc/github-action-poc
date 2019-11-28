@@ -36,7 +36,7 @@ jobs:
         run: |
           set -ex
           pwd
-          echo ${{ GITHUB_REF }}
+          echo $GITHUB_REF
           ls -la ../${{ env.DEST_REPO }}
 
 #      # https://github.com/EndBug/add-and-commit
