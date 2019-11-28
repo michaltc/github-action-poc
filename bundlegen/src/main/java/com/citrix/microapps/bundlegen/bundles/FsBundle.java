@@ -26,6 +26,25 @@ public class FsBundle {
         return path.getFileName().toString();
     }
 
+    public String getArchiveName() {
+        return getVendor() + "_" + getId();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FsBundle fsBundle = (FsBundle) o;
+
+        return path.equals(fsBundle.path);
+    }
+
+    @Override
+    public int hashCode() {
+        return path.hashCode();
+    }
+
     @Override
     public String toString() {
         return path.toString();

@@ -19,6 +19,7 @@ class FsBundleTest {
                 () -> assertSame(path, fsBundle.getPath()),
                 () -> assertEquals("vendor", fsBundle.getVendor()),
                 () -> assertEquals("id", fsBundle.getId()),
+                () -> assertEquals("vendor_id", fsBundle.getArchiveName()),
                 () -> assertEquals("test/vendor/id", fsBundle.toString())
         );
     }

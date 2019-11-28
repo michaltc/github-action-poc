@@ -5,7 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import com.citrix.microapps.bundlegen.bundles.BundlesFinder;
+import com.citrix.microapps.bundlegen.bundles.FindBundles;
 
 /**
  * Application runner with `main()`.
@@ -30,7 +30,7 @@ class BundlegenMain {
             throw new ValidationException("Creation of output directory failed: " + distDir, e);
         }
 
-        new BundlesFinder()
+        new FindBundles()
                 .findBundles(bundlesDir)
                 .forEach(bundle -> System.out.println("Bundle: " + bundle));
     }
