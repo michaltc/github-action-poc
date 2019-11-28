@@ -9,7 +9,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Checkout destination repository
-      - uses: actions/checkout@v1
+        uses: actions/checkout@v1
         with:
           repository: michaltc/workspace-microapps-bundles
           ref: refs/heads/master
