@@ -66,7 +66,7 @@ jobs:
 
             set +x
             mkdir -p "$HOME/.ssh/"
-            echo "$DEST_REPO_SSH_KEY" > "$HOME/.ssh/id_rsa"
+            echo "${{ secrets.DEST_REPO_SSH_KEY }}" > "$HOME/.ssh/id_rsa"
             chmod 600 "$HOME/.ssh/id_rsa"
             set -x
 
