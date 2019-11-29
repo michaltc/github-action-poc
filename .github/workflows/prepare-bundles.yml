@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: ${{ env.DEST_REPO }}
-          # ref: ${{ env.GITHUB_REF }}
+          ref: ${{ env.GITHUB_REF }}
 
       - name: Checkout destination branch
         run: |
