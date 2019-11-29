@@ -59,7 +59,7 @@ jobs:
           then
             git config user.name "Bundlegen bot"
             git config user.email "bundlegen.bot@github.com"
-            git remote add origin "git@github.com:$DEST_REPO.git"
+            git remote set-url origin "git@github.com:$DEST_REPO.git"
 
             message=$(printf "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA")
             git commit -a -m "$message"
