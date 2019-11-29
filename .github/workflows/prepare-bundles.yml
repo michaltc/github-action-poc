@@ -59,9 +59,14 @@ jobs:
           then
             git config user.name "Bundlegen bot"
             git config user.email "bundlegen.bot@github.com"
+
             message=$(printf "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA")
             git commit --all --message "$message"
-            git push --set-upstream origin "${GITHUB_REF:11}"
+
+            set +x
+            # git config credential.username $GITHUB_ACTOR
+            git -c http.extraheader="AUTHORIZATION: basic $GITHUB_TOKEN" push --set-upstream origin "${GITHUB_REF:11}"
+            set -x
           else
             echo "Working tree clean. Nothing to commit."
           fi
