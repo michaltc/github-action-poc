@@ -47,7 +47,6 @@ jobs:
         run: |
           set -x
           cd $DEST_REPO_DIR
-          date > $BUNDLES_DIR/debug.txt
           git add .
 
           if ! git diff --staged --exit-code
@@ -67,6 +66,7 @@ jobs:
             chmod 600 "$HOME/.ssh/id_rsa"
             set -x
 
+            ssh-keyscan -H -t rsa github.com >> ~/.ssh/known_hosts
             git push --set-upstream origin "${GITHUB_REF:11}"
             rm "$HOME/.ssh/id_rsa"
           else
