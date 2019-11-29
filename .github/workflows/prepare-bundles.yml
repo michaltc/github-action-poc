@@ -61,7 +61,7 @@ jobs:
             git config user.email "bundlegen.bot@github.com"
             git remote set-url origin "git@github.com:$DEST_REPO.git"
 
-            message=$(printf "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA")
+            message=$(printf "Generated bundles\n\n- https://github:com/$GITHUB_REPOSITORY/tree/${GITHUB_REF:11}\n- https://github.com/$GITHUB_REPOSITORY/commit/$GITHUB_SHA")
             git commit -a -m "$message"
 
             set +x
@@ -70,21 +70,9 @@ jobs:
             chmod 600 "$HOME/.ssh/id_rsa"
             set -x
 
-            cat "$HOME/.ssh/id_rsa"
-
             ssh-keyscan -H -t rsa github.com >> ~/.ssh/known_hosts
             git push --set-upstream origin "${GITHUB_REF:11}"
             rm "$HOME/.ssh/id_rsa"
           else
             echo "Working tree clean. Nothing to commit."
           fi
-
-
-#      # https://github.com/EndBug/add-and-commit
-#      - name: Commit generated files
-#        uses: EndBug/add-and-commit@v2.1.0
-#        with:
-#          message: "Prepare bundles"
-#          path: "./bundles_dist"
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
