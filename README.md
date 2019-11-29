@@ -20,10 +20,3 @@ https://github.com/michaltc/workspace-microapps/settings/secrets/
 Add public key to the destination repository and enable `Allow write access` option.
 
 https://github.com/michaltc/workspace-microapps-bundles/settings/keys/
-
-
-### Delete branch after merge
-
-Enable `Automatically delete head branches` in settings.
-
-https://github.com/michaltc/workspace-microapps/settings
