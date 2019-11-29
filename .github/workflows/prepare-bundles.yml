@@ -41,6 +41,8 @@ jobs:
         run: |
           set -x
           cd $DEST_REPO_DIR
+          git checkout "$DEST_REPO_BRANCH"
+          git pull
           git add .
           git status
 
