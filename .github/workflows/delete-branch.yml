@@ -19,6 +19,7 @@ jobs:
         run: |
           set -x
           cd $DEST_REPO_DIR
+          env
 
           git config user.name "Bundlegen bot"
           git config user.email "bundlegen.bot@github.com"
