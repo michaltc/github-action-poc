@@ -41,11 +41,18 @@ jobs:
         run: |
           set -x
           cd $DEST_REPO_DIR
-          git config user.name "Bundlegen bot"
-          git config user.email "bundlegen.bot@github.com"
           git add .
-          git commit --all --allow-empty --message "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA" --dry-run
-          git log | head
+          git status
+
+          if ! git diff --staged --exit-code
+          then
+            git config user.name "Bundlegen bot"
+            git config user.email "bundlegen.bot@github.com"
+            git commit --all --message "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA"
+          else
+            echo "Working tree clean. Nothing to commit."
+          fi
+
 
 #      # https://github.com/EndBug/add-and-commit
 #      - name: Commit generated files
