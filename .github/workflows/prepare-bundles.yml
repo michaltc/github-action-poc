@@ -3,8 +3,8 @@ on:
   push:
 env:
   DEST_REPO: michaltc/workspace-microapps-bundles
-  DEST_REPO_BRANCH: master
   DEST_REPO_DIR: ../workspace-microapps-bundles
+  BUNDLES_DIR: bundles
 jobs:
   build:
     runs-on: ubuntu-18.04
@@ -16,7 +16,13 @@ jobs:
         uses: actions/checkout@v1
         with:
           repository: ${{ env.DEST_REPO }}
-          ref: ${{ env.DEST_REPO_BRANCH }}
+          # ref: ${{ env.GITHUB_REF }}
+
+      - name: Checkout destination branch
+        run: |
+          set -x
+          cd $DEST_REPO_DIR
+          git checkout "${GITHUB_REF:11}" || git checkout -b "${GITHUB_REF:11}"
 
       - name: Maven modules cache
         uses: actions/cache@v1
@@ -32,17 +38,20 @@ jobs:
       - name: Execute bundlegen
         run: |
           set -x
-          branch=$(echo $GITHUB_REF | sed 's%^refs/heads/%%' | sed 's%[^-a-zA-Z0-9]%_%g')
-          args="bundles $DEST_REPO_DIR/$branch"
-          rm -rf "$DEST_REPO_DIR/$branch"
+
+          # branch=$(echo $GITHUB_REF | sed 's%^refs/heads/%%' | sed 's%[^-a-zA-Z0-9]%_%g')
+          # rm -rf "$DEST_REPO_DIR/$branch"
+          # args="$BUNDLES_DIR $DEST_REPO_DIR/$branch"
+
+          rm -rf "$DEST_REPO_DIR/$BUNDLES_DIR/"
+          args="$BUNDLES_DIR $DEST_REPO_DIR/$BUNDLES_DIR/"
           mvn --batch-mode exec:java -pl bundlegen -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain" -Dexec.args="$args"
 
       - name: Commit generated files
         run: |
           set -x
           cd $DEST_REPO_DIR
-          git checkout "$DEST_REPO_BRANCH"
-          git pull
+          date > $BUNDLES_DIR/debug.txt
           git add .
           git status
 
@@ -51,6 +60,7 @@ jobs:
             git config user.name "Bundlegen bot"
             git config user.email "bundlegen.bot@github.com"
             git commit --all --message "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA"
+            git push --set-upstream origin "${GITHUB_REF:11}"
           else
             echo "Working tree clean. Nothing to commit."
           fi
