@@ -3,7 +3,7 @@ on:
   push:
 env:
   DEST_REPO: michaltc/workspace-microapps-bundles
-  DEST_REPO_BRANCH: refs/heads/master
+  DEST_REPO_BRANCH: master
   DEST_REPO_DIR: ../workspace-microapps-bundles
 jobs:
   build:
