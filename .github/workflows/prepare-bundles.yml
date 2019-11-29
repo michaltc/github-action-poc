@@ -44,7 +44,8 @@ jobs:
           git config user.name "Bundlegen bot"
           git config user.email "bundlegen.bot@github.com"
           git add .
-          git commit -a -m "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA" --dry-run
+          git commit --all --allow-empty --message "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA" --dry-run
+          git log | head
 
 #      # https://github.com/EndBug/add-and-commit
 #      - name: Commit generated files
