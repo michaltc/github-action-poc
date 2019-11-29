@@ -66,7 +66,7 @@ jobs:
             - $GITHUB_REPOSITORY
             - $GITHUB_REF
             - $GITHUB_SHA
-            EOF)
+        EOF)
 
             git commit --all --message "$message"
             git push --set-upstream origin "${GITHUB_REF:11}"
