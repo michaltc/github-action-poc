@@ -59,7 +59,16 @@ jobs:
           then
             git config user.name "Bundlegen bot"
             git config user.email "bundlegen.bot@github.com"
-            git commit --all --message "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA"
+
+            message=$(cat <<EOF
+            Generated bundles
+
+            - $GITHUB_REPOSITORY
+            - $GITHUB_REF
+            - $GITHUB_SHA
+            EOF)
+
+            git commit --all --message "$message"
             git push --set-upstream origin "${GITHUB_REF:11}"
           else
             echo "Working tree clean. Nothing to commit."
