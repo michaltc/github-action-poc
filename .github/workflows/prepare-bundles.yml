@@ -34,7 +34,17 @@ jobs:
           set -x
           branch=$(echo $GITHUB_REF | sed 's%^refs/heads/%%' | sed 's%[^-a-zA-Z0-9]%_%g')
           args="bundles $DEST_REPO_DIR/$branch"
+          rm -rf "$DEST_REPO_DIR/$branch"
           mvn --batch-mode exec:java -pl bundlegen -Dexec.mainClass="com.citrix.microapps.bundlegen.BundlegenMain" -Dexec.args="$args"
+
+      - name: Commit generated files
+        run: |
+          set -x
+          cd $DEST_REPO_DIR
+          git config user.name "Bundlegen bot"
+          git config user.email "bundlegen.bot@github.com"
+          git add .
+          git commit -a -m "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA" --dry-run
 
 #      # https://github.com/EndBug/add-and-commit
 #      - name: Commit generated files
