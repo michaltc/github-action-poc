@@ -59,9 +59,10 @@ jobs:
           then
             git config user.name "Bundlegen bot"
             git config user.email "bundlegen.bot@github.com"
+            git remote add origin "git@github.com:$DEST_REPO.git"
 
             message=$(printf "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA")
-            git commit --all --message "$message"
+            git commit -a -m "$message"
 
             set +x
             mkdir -p "$HOME/.ssh/"
@@ -69,7 +70,7 @@ jobs:
             chmod 600 "$HOME/.ssh/id_rsa"
             set -x
 
-            git push "git@github.com:$DEST_REPO.git" --set-upstream origin "${GITHUB_REF:11}"
+            git push --set-upstream origin "${GITHUB_REF:11}"
             rm "$HOME/.ssh/id_rsa"
           else
             echo "Working tree clean. Nothing to commit."
