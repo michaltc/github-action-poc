@@ -64,13 +64,12 @@ jobs:
             git commit --all --message "$message"
 
             set +x
-            url=$(git remote get-url --push origin)
-            new_url=$(echo "$url" | sed "s%github.com%$GITHUB_ACTOR:$GITHUB_TOKEN@github.com%")
-            git remote set-url --push origin "$new_url"
-            # git config credential.username $GITHUB_ACTOR
+            echo "$DEST_REPO_SSH_KEY" > "$HOME/.ssh/id_rsa"
             set -x
+            chmod 600 "$HOME/.ssh/id_rsa"
 
-            git push --set-upstream origin "${GITHUB_REF:11}"
+            git push "git@github.com:$DEST_REPO.git" --set-upstream origin "${GITHUB_REF:11}"
+            rm "$HOME/.ssh/id_rsa"
           else
             echo "Working tree clean. Nothing to commit."
           fi
