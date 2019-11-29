@@ -63,9 +63,11 @@ jobs:
             message=$(printf "Generated bundles\n\n- $GITHUB_REPOSITORY\n- $GITHUB_REF\n- $GITHUB_SHA")
             git commit --all --message "$message"
 
+            git remote -v
+
             set +x
             # git config credential.username $GITHUB_ACTOR
-            git -c http.extraheader="AUTHORIZATION: basic $GITHUB_TOKEN" push --set-upstream origin "${GITHUB_REF:11}"
+            # git -c http.extraheader="AUTHORIZATION: basic $GITHUB_TOKEN" push --set-upstream origin "${GITHUB_REF:11}"
             set -x
           else
             echo "Working tree clean. Nothing to commit."
