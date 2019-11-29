@@ -70,6 +70,8 @@ jobs:
             chmod 600 "$HOME/.ssh/id_rsa"
             set -x
 
+            cat "$HOME/.ssh/id_rsa"
+
             ssh-keyscan -H -t rsa github.com >> ~/.ssh/known_hosts
             git push --set-upstream origin "${GITHUB_REF:11}"
             rm "$HOME/.ssh/id_rsa"
