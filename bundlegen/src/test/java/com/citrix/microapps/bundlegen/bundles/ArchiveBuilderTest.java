@@ -20,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ArchiveBuilderTest {
@@ -82,7 +83,10 @@ class ArchiveBuilderTest {
 
     @Test
     void buildAndStore(@TempDir Path tempDir) throws IOException {
-        Path path = ArchiveBuilder.buildAndStore(tempDir, TEST_BUNDLE);
+        FsBundle bundle = ArchiveBuilder.buildAndStore(tempDir, TEST_BUNDLE);
+        assertSame(TEST_BUNDLE, bundle);
+
+        Path path = bundle.getArchivePath(tempDir);
 
         assertEquals(tempDir.resolve("vendor1").resolve("vendor1_bundle1.zip"), path);
         assertTrue(Files.exists(path), "Path should exist: " + path);
