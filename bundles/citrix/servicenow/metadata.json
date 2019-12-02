@@ -1,6 +1,6 @@
 {
   "id": "servicenow",
-  "vendor": "Citrix",
+  "vendor": "citrix",
   "title": "ServiceNow",
   "description": "ServiceNow lorem ipsum dolor sit amet.",
   "version": "0.0.1",
