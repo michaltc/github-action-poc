@@ -22,7 +22,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 public class ArchiveBuilder {
     private static final FileTime EPOCH = FileTime.fromMillis(0);
 
-    public static Path buildAndStore(Path archivesDir, FsBundle bundle) {
+    public static FsBundle buildAndStore(Path archivesDir, FsBundle bundle) {
         ArchiveBuilder builder = new ArchiveBuilder();
         byte[] content = builder.buildArchive(bundle);
         return builder.storeArchive(archivesDir, bundle, content);
@@ -69,9 +69,9 @@ public class ArchiveBuilder {
      * @param archivesDir top level directory for all archives
      * @param bundle      bundle to store
      * @param content     content of the bundle archive
-     * @return file system path to the created archive
+     * @return the bundle passed in
      */
-    public Path storeArchive(Path archivesDir, FsBundle bundle, byte[] content) {
+    public FsBundle storeArchive(Path archivesDir, FsBundle bundle, byte[] content) {
         Path archivePath = bundle.getArchivePath(archivesDir);
 
         try {
@@ -81,7 +81,7 @@ public class ArchiveBuilder {
             throw new UncheckedIOException("Storing of zip archive to file system failed: " + archivePath, e);
         }
 
-        return archivePath;
+        return bundle;
     }
 
     private void addToArchive(ZipOutputStream zipStream, String archiveName, Path topDirectory, Path file) {

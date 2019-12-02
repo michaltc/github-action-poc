@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.citrix.microapps.bundlegen.bundles.ArchiveBuilder;
 import com.citrix.microapps.bundlegen.bundles.BundlesFinder;
 
 /**
@@ -30,7 +31,8 @@ class BundlegenMain {
 
         new BundlesFinder()
                 .findBundles(bundlesDir)
-                .forEach(bundle -> System.out.println("Bundle: " + bundle));
+                .map(bundle -> ArchiveBuilder.buildAndStore(archivesDir, bundle))
+                .forEach(bundle -> System.out.println("Bundle processed: " + bundle));
     }
 
     private static void createDirectories(Path directory) {
