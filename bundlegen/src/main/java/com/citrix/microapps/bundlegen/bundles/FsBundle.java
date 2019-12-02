@@ -9,6 +9,7 @@ import java.nio.file.Path;
  */
 public class FsBundle {
     private static final String ARCHIVE_EXTENSION = ".zip";
+    private static final String METADATA_FILE = "metadata.json";
 
     private final Path path;
 
@@ -36,6 +37,10 @@ public class FsBundle {
         return archivesDir
                 .resolve(getVendor())
                 .resolve(getArchiveName() + ARCHIVE_EXTENSION);
+    }
+
+    public Path getMetadataPath() {
+        return path.resolve(METADATA_FILE);
     }
 
     @Override

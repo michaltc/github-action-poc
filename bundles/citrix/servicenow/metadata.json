@@ -1,18 +1,17 @@
 {
   "id": "servicenow",
   "vendor": "Citrix",
-  "name": "ServiceNow",
+  "title": "ServiceNow",
   "description": "ServiceNow lorem ipsum dolor sit amet.",
   "version": "0.0.1",
   "maServerVersion": "0.0.1",
-  "category": "demo",
+  "categories": [
+    "INTERNAL_DEVELOPMENT"
+  ],
   "exportedTime": 1574674488,
-  "microappsCount?": 42,
-  "assistantResolversCount?": 42,
   "microapps": [
     {
-      "title": "Assign ticket",
-      "translationsCount?": 42
+      "title": "Assign ticket"
     }
   ]
 }

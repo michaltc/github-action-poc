@@ -22,6 +22,7 @@ class FsBundleTest {
                 () -> assertEquals("vendor_id", bundle.getArchiveName()),
                 () -> assertEquals(Paths.get("somewhere/archives/vendor/vendor_id.zip"),
                         bundle.getArchivePath(Paths.get("somewhere", "archives"))),
+                () -> assertEquals(Paths.get("test/vendor/id/metadata.json"), bundle.getMetadataPath()),
                 () -> assertEquals("test/vendor/id", bundle.toString())
         );
     }

@@ -45,8 +45,8 @@ class ArchiveBuilderTest {
      */
     private void assertContent(byte[] content) {
         byte[] expectedChecksum = new byte[] {
-                -102, 91, -81, 124, -75, -67, -58, -75,
-                -52, 11, 79, 42, 55, -69, -47, -96};
+                -19, 23, 41, 28, -111, -124, -66, 29,
+                -35, -88, -115, 125, 21, -33, -71, -8};
 
         List<String> expectedEntries = Arrays.asList(
                 "vendor1_bundle1/i18n/de.json",
@@ -82,11 +82,12 @@ class ArchiveBuilderTest {
     }
 
     @Test
-    void buildAndStore(@TempDir Path tempDir) throws IOException {
-        FsBundle bundle = ArchiveBuilder.buildAndStore(tempDir, TEST_BUNDLE);
-        assertSame(TEST_BUNDLE, bundle);
+    void buildAndStore(@TempDir Path tempDir) throws Exception {
+        Bundle bundle = new Bundle(TEST_BUNDLE, MetadataLoader.load(TEST_BUNDLE));
+        Bundle bundle2 = ArchiveBuilder.buildAndStore(tempDir, bundle);
+        assertSame(bundle, bundle2);
 
-        Path path = bundle.getArchivePath(tempDir);
+        Path path = bundle.getFs().getArchivePath(tempDir);
 
         assertEquals(tempDir.resolve("vendor1").resolve("vendor1_bundle1.zip"), path);
         assertTrue(Files.exists(path), "Path should exist: " + path);
@@ -96,7 +97,7 @@ class ArchiveBuilderTest {
     }
 
     @Test
-    void overwriteExisting(@TempDir Path tempDir) throws IOException {
+    void overwriteExisting(@TempDir Path tempDir) throws Exception {
         // No exception should occur if the file is already there.
         buildAndStore(tempDir);
         buildAndStore(tempDir);

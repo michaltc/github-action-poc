@@ -22,10 +22,11 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 public class ArchiveBuilder {
     private static final FileTime EPOCH = FileTime.fromMillis(0);
 
-    public static FsBundle buildAndStore(Path archivesDir, FsBundle bundle) {
+    public static Bundle buildAndStore(Path archivesDir, Bundle bundle) {
         ArchiveBuilder builder = new ArchiveBuilder();
-        byte[] content = builder.buildArchive(bundle);
-        return builder.storeArchive(archivesDir, bundle, content);
+        byte[] content = builder.buildArchive(bundle.getFs());
+        builder.storeArchive(archivesDir, bundle.getFs(), content);
+        return bundle;
     }
 
     /**
@@ -53,7 +54,7 @@ public class ArchiveBuilder {
             zipStream.finish();
             return bytes.toByteArray();
         } catch (IOException e) {
-            throw new UncheckedIOException("Creation of zip archive failed: " + bundle.getPath(), e);
+            throw new UncheckedIOException("Creation of zip archive failed: " + bundle, e);
         }
     }
 
@@ -69,9 +70,8 @@ public class ArchiveBuilder {
      * @param archivesDir top level directory for all archives
      * @param bundle      bundle to store
      * @param content     content of the bundle archive
-     * @return the bundle passed in
      */
-    public FsBundle storeArchive(Path archivesDir, FsBundle bundle, byte[] content) {
+    public void storeArchive(Path archivesDir, FsBundle bundle, byte[] content) {
         Path archivePath = bundle.getArchivePath(archivesDir);
 
         try {
@@ -80,8 +80,6 @@ public class ArchiveBuilder {
         } catch (IOException e) {
             throw new UncheckedIOException("Storing of zip archive to file system failed: " + archivePath, e);
         }
-
-        return bundle;
     }
 
     private void addToArchive(ZipOutputStream zipStream, String archiveName, Path topDirectory, Path file) {

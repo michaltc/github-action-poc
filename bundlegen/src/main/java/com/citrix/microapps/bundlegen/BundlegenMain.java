@@ -6,7 +6,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.citrix.microapps.bundlegen.bundles.ArchiveBuilder;
+import com.citrix.microapps.bundlegen.bundles.Bundle;
 import com.citrix.microapps.bundlegen.bundles.BundlesFinder;
+import com.citrix.microapps.bundlegen.bundles.MetadataLoader;
 
 /**
  * Application runner with `main()`.
@@ -31,6 +33,7 @@ class BundlegenMain {
 
         new BundlesFinder()
                 .findBundles(bundlesDir)
+                .map(bundle -> new Bundle(bundle, MetadataLoader.load(bundle)))
                 .map(bundle -> ArchiveBuilder.buildAndStore(archivesDir, bundle))
                 .forEach(bundle -> System.out.println("Bundle processed: " + bundle));
     }
