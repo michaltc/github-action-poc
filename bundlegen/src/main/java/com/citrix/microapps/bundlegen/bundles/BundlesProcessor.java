@@ -18,12 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class BundlesProcessor {
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    private final Clock clock;
-
-    public BundlesProcessor(Clock clock) {
-        this.clock = clock;
-    }
-
     public MetadataOut processOneBundle(FsBundle fs, Path archivesDir, URI bundlesRepository) {
         System.out.println("Processing bundle: " + fs);
         MetadataIn metadata = MetadataLoader.load(fs);
@@ -39,7 +33,7 @@ public class BundlesProcessor {
 
     public void writeBundlesJson(List<MetadataOut> allBundles, Path bundlesJson) {
         try {
-            Bundles bundles = new Bundles(allBundles, clock.instant().getEpochSecond());
+            Bundles bundles = new Bundles(allBundles);
             OBJECT_MAPPER.writeValue(bundlesJson.toFile(), bundles);
             System.out.println("Metadata generated: " + bundlesJson);
         } catch (IOException e) {

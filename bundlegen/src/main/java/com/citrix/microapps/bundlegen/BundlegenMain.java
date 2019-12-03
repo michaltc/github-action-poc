@@ -5,7 +5,6 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Clock;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,8 +42,7 @@ class BundlegenMain {
         createDirectories(distDir);
         createDirectories(archivesDir);
 
-        Clock clock = Clock.systemUTC();
-        BundlesProcessor processor = new BundlesProcessor(clock);
+        BundlesProcessor processor = new BundlesProcessor();
 
         List<MetadataOut> allBundles = new BundlesFinder()
                 .findBundles(bundlesDir)
