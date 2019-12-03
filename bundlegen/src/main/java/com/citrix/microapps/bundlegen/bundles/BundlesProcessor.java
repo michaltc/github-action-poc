@@ -4,19 +4,20 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.file.Path;
-import java.time.Clock;
 import java.util.List;
 
 import com.citrix.microapps.bundlegen.pojo.Bundles;
 import com.citrix.microapps.bundlegen.pojo.MetadataIn;
 import com.citrix.microapps.bundlegen.pojo.MetadataOut;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
 /**
  * Reader of input bundles and writer of the output ones.
  */
 public class BundlesProcessor {
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final ObjectWriter OBJECT_MAPPER = new ObjectMapper()
+            .writerWithDefaultPrettyPrinter();
 
     public MetadataOut processOneBundle(FsBundle fs, Path archivesDir, URI bundlesRepository) {
         System.out.println("Processing bundle: " + fs);

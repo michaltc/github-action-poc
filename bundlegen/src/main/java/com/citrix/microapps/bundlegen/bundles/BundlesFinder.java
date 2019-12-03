@@ -36,6 +36,8 @@ public class BundlesFinder {
             return paths
                     .filter(path -> !directory.equals(path))
                     .filter(this::isDirectoryOrException)
+                    // Process the subdirectories always in the same order, less differences for git.
+                    .sorted()
                     // Streams are lazily evaluated so we need to first collect all the paths, close the opened
                     // directory to prevent resource leak and then build a new stream from the intermediate list.
                     // Expecting only tens, max. hundreds subdirectories inside, no real streaming should be needed
