@@ -1,5 +1,6 @@
 package com.citrix.microapps.bundlegen.bundles;
 
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -22,6 +23,14 @@ class FsBundleTest {
                 () -> assertEquals("vendor_id", bundle.getArchiveName()),
                 () -> assertEquals(Paths.get("somewhere/archives/vendor/vendor_id.zip"),
                         bundle.getArchivePath(Paths.get("somewhere", "archives"))),
+                () -> assertEquals(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob/master" +
+                                "/bundles/archives/vendor/vendor_id.zip"),
+                        bundle.getArchiveUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
+                                "/master/bundles/archives/"))),
+                () -> assertEquals(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob/master" +
+                                "/bundles/archives/vendor/vendor_id.zip"),
+                        bundle.getArchiveUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
+                                "/master/bundles/archives"))),
                 () -> assertEquals(Paths.get("test/vendor/id/metadata.json"), bundle.getMetadataPath()),
                 () -> assertEquals("test/vendor/id", bundle.toString())
         );

@@ -1,28 +1,40 @@
 package com.citrix.microapps.bundlegen;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Clock;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import com.citrix.microapps.bundlegen.bundles.ArchiveBuilder;
-import com.citrix.microapps.bundlegen.bundles.Bundle;
 import com.citrix.microapps.bundlegen.bundles.BundlesFinder;
-import com.citrix.microapps.bundlegen.bundles.MetadataLoader;
+import com.citrix.microapps.bundlegen.bundles.BundlesProcessor;
+import com.citrix.microapps.bundlegen.pojo.MetadataOut;
 
 /**
  * Application runner with `main()`.
  */
 class BundlegenMain {
+    public static final String ARCHIVES_DIR = "archives";
+    public static final String BUNDLES_JSON = "bundles.json";
+
     public static void main(String[] args) {
-        if (args.length < 2) {
-            System.err.println("Usage: bundlegen bundles-dir dist-dir");
+        if (args.length < 3) {
+            System.err.println("Usage:   bundlegen bundles-dir dist-dir link-bundles");
+            System.err.println("Example: bundlegen bundles bundles-dist https://github" +
+                    ".com/michaltc/workspace-microapps-bundles/tree/master/bundles/");
             System.exit(1);
         }
 
         Path bundlesDir = Paths.get(args[0]);
         Path distDir = Paths.get(args[1]);
-        Path archivesDir = distDir.resolve("archives");
+        Path archivesDir = distDir.resolve(ARCHIVES_DIR);
+        URI bundlesRepository = URI.create(
+                args[2].endsWith("/")
+                        ? args[2] + ARCHIVES_DIR
+                        : args[2] + "/" + ARCHIVES_DIR);
 
         if (!Files.isDirectory(bundlesDir) || !Files.isReadable(bundlesDir)) {
             throw new ValidationException("Input path with bundles does not exist or is not a readable directory: " + bundlesDir);
@@ -31,11 +43,15 @@ class BundlegenMain {
         createDirectories(distDir);
         createDirectories(archivesDir);
 
-        new BundlesFinder()
+        Clock clock = Clock.systemUTC();
+        BundlesProcessor processor = new BundlesProcessor(clock);
+
+        List<MetadataOut> allBundles = new BundlesFinder()
                 .findBundles(bundlesDir)
-                .map(bundle -> new Bundle(bundle, MetadataLoader.load(bundle)))
-                .map(bundle -> ArchiveBuilder.buildAndStore(archivesDir, bundle))
-                .forEach(bundle -> System.out.println("Bundle processed: " + bundle));
+                .map(bundle -> processor.processOneBundle(bundle, archivesDir, bundlesRepository))
+                .collect(Collectors.toList());
+
+        processor.writeBundlesJson(allBundles, distDir.resolve(BUNDLES_JSON));
     }
 
     private static void createDirectories(Path directory) {

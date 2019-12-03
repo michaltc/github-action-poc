@@ -44,10 +44,6 @@ class ArchiveBuilderTest {
      * @see #TEST_BUNDLE
      */
     private void assertContent(byte[] content) {
-        byte[] expectedChecksum = new byte[] {
-                -19, 23, 41, 28, -111, -124, -66, 29,
-                -35, -88, -115, 125, 21, -33, -71, -8};
-
         List<String> expectedEntries = Arrays.asList(
                 "vendor1_bundle1/i18n/de.json",
                 "vendor1_bundle1/i18n/en.json",
@@ -60,7 +56,7 @@ class ArchiveBuilderTest {
         );
 
         assertAll(
-                () -> assertArrayEquals(expectedChecksum, MessageDigest.getInstance("MD5").digest(content),
+                () -> assertEquals("42723202d7010177e2d4e11ec377a093", new ArchiveBuilder().md5Hex(content),
                         "Produced zip should be always exactly same on byte level"),
                 () -> assertEquals(expectedEntries, listEntriesInZip(content))
         );
@@ -83,17 +79,15 @@ class ArchiveBuilderTest {
 
     @Test
     void buildAndStore(@TempDir Path tempDir) throws Exception {
-        Bundle bundle = new Bundle(TEST_BUNDLE, MetadataLoader.load(TEST_BUNDLE));
-        Bundle bundle2 = ArchiveBuilder.buildAndStore(tempDir, bundle);
-        assertSame(bundle, bundle2);
-
-        Path path = bundle.getFs().getArchivePath(tempDir);
+        ArchiveBuilder builder = new ArchiveBuilder();
+        byte[] content = builder.buildArchive(TEST_BUNDLE);
+        Path path = builder.storeArchive(tempDir, TEST_BUNDLE, content);
 
         assertEquals(tempDir.resolve("vendor1").resolve("vendor1_bundle1.zip"), path);
         assertTrue(Files.exists(path), "Path should exist: " + path);
 
-        byte[] content = Files.readAllBytes(path);
-        assertContent(content);
+        byte[] loadedContent = Files.readAllBytes(path);
+        assertContent(loadedContent);
     }
 
     @Test

@@ -39,8 +39,11 @@ jobs:
         run: |
           set -x
           rm -rf "$DEST_REPO_DIR/$BUNDLES_DIR/"
+
           main_class="com.citrix.microapps.bundlegen.BundlegenMain"
-          args="$BUNDLES_DIR $DEST_REPO_DIR/$BUNDLES_DIR/"
+          link_bundles="https://github.com/$GITHUB_REPOSITORY/tree/${GITHUB_REF:11}/$BUNDLES_DIR/"
+          args="$BUNDLES_DIR $DEST_REPO_DIR/$BUNDLES_DIR/ $link_bundles"
+
           mvn --batch-mode exec:java -pl bundlegen -Dexec.mainClass="$main_class" -Dexec.args="$args"
 
       - name: Commit and push generated files

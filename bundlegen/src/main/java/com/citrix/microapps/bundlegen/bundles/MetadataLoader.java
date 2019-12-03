@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-import com.citrix.microapps.bundlegen.pojo.Metadata;
+import com.citrix.microapps.bundlegen.pojo.MetadataIn;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -18,9 +18,9 @@ public class MetadataLoader {
             .with(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
             .with(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
             .with(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES)
-            .forType(Metadata.class);
+            .forType(MetadataIn.class);
 
-    public static Metadata load(FsBundle bundle) {
+    public static MetadataIn load(FsBundle bundle) {
         try {
             File file = bundle.getMetadataPath().toFile();
             return METADATA_READER.readValue(file);

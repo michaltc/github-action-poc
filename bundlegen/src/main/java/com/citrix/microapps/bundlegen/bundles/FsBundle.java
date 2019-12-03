@@ -1,5 +1,6 @@
 package com.citrix.microapps.bundlegen.bundles;
 
+import java.net.URI;
 import java.nio.file.Path;
 
 /**
@@ -37,6 +38,12 @@ public class FsBundle {
         return archivesDir
                 .resolve(getVendor())
                 .resolve(getArchiveName() + ARCHIVE_EXTENSION);
+    }
+
+    public URI getArchiveUrl(URI bundlesRepository) {
+        String repo = bundlesRepository.toString();
+        String repoSlash = repo.endsWith("/") ? repo : repo + "/";
+        return URI.create(repoSlash + getVendor() + "/" + getArchiveName() + ARCHIVE_EXTENSION);
     }
 
     public Path getMetadataPath() {

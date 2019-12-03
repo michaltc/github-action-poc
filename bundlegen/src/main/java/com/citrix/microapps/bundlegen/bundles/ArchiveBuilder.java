@@ -6,10 +6,14 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.stream.Stream;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import org.apache.commons.codec.binary.Hex;
 
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -21,13 +25,6 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
  */
 public class ArchiveBuilder {
     private static final FileTime EPOCH = FileTime.fromMillis(0);
-
-    public static Bundle buildAndStore(Path archivesDir, Bundle bundle) {
-        ArchiveBuilder builder = new ArchiveBuilder();
-        byte[] content = builder.buildArchive(bundle.getFs());
-        builder.storeArchive(archivesDir, bundle.getFs(), content);
-        return bundle;
-    }
 
     /**
      * Build zip archive with all the files of the bundle.
@@ -70,13 +67,15 @@ public class ArchiveBuilder {
      * @param archivesDir top level directory for all archives
      * @param bundle      bundle to store
      * @param content     content of the bundle archive
+     * @return path to the archive
      */
-    public void storeArchive(Path archivesDir, FsBundle bundle, byte[] content) {
+    public Path storeArchive(Path archivesDir, FsBundle bundle, byte[] content) {
         Path archivePath = bundle.getArchivePath(archivesDir);
 
         try {
             Files.createDirectories(archivePath.getParent());
             Files.write(archivePath, content, CREATE, TRUNCATE_EXISTING);
+            return archivePath;
         } catch (IOException e) {
             throw new UncheckedIOException("Storing of zip archive to file system failed: " + archivePath, e);
         }
@@ -100,6 +99,15 @@ public class ArchiveBuilder {
             zipStream.closeEntry();
         } catch (IOException e) {
             throw new UncheckedIOException("Adding of file to zip archive failed: " + file, e);
+        }
+    }
+
+    public String md5Hex(byte[] content) {
+        try {
+            byte[] md5 = MessageDigest.getInstance("MD5").digest(content);
+            return Hex.encodeHexString(md5, true);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("MD5 computation failed");
         }
     }
 }
