@@ -41,7 +41,7 @@ jobs:
           rm -rf "$DEST_REPO_DIR/$BUNDLES_DIR/"
 
           main_class="com.citrix.microapps.bundlegen.BundlegenMain"
-          link_bundles="https://github.com/$DEST_REPO/blob/${GITHUB_REF:11}/$BUNDLES_DIR/"
+          link_bundles="https://github.com/$DEST_REPO/raw/${GITHUB_REF:11}/$BUNDLES_DIR/"
           args="$BUNDLES_DIR $DEST_REPO_DIR/$BUNDLES_DIR/ $link_bundles"
 
           mvn --batch-mode exec:java -pl bundlegen -Dexec.mainClass="$main_class" -Dexec.args="$args"
