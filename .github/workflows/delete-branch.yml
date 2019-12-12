@@ -31,7 +31,7 @@ jobs:
 
           comm -13 /tmp/branches_source.txt /tmp/branches_destination.txt | tee /tmp/branches_delete.txt
 
-          "../${GITHUB_REPOSITORY}/.github/scripts/git_setup.sh" "${DEST_REPO}" "${{ secrets.DEST_REPO_SSH_KEY }}"
+          "${GITHUB_WORKSPACE}/.github/scripts/git_setup.sh" "${DEST_REPO}" "${{ secrets.DEST_REPO_SSH_KEY }}"
 
           for branch in $(cat /tmp/branches_delete.txt)
           do
