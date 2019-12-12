@@ -54,7 +54,7 @@ jobs:
 
           if ! git diff --staged --exit-code
           then
-            "../${GITHUB_REPOSITORY}/.github/scripts/git_setup.sh" "${DEST_REPO}" "${{ secrets.DEST_REPO_SSH_KEY }}"
+            "${GITHUB_WORKSPACE}/.github/scripts/git_setup.sh" "${DEST_REPO}" "${{ secrets.DEST_REPO_SSH_KEY }}"
 
             branch_link="https://github.com/${GITHUB_REPOSITORY}/tree/${GITHUB_REF:11}"
             commit_link="https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}"
