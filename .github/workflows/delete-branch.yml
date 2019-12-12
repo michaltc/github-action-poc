@@ -1,4 +1,4 @@
-name: Delete obsolete branches from destination.
+name: Delete obsolete branches
 on:
   delete
 env:
@@ -18,19 +18,23 @@ jobs:
           repository: ${{ env.DEST_REPO }}
           ref: master
 
-      # GitHub Action unfortunatelly doesn't provide name of the deleted branch in the `delete` event. GITHUB_SHA and
-      # GITHUB_REF variables refer to the default branch (master). Diff of branches is used as a dirty workaround.
+      # GitHub Action unfortunately doesn't provide name of the deleted branch in the `delete` event. GITHUB_SHA and
+      # GITHUB_REF variables refer to the default branch (master). Diff of all branches is used as a workaround.
+      # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/events-that-trigger-workflows#delete-event-delete
       - name: Delete obsolete branches
         run: |
           set -x
+
           git branch --remotes --format='%(refname:short)' | sed 's%^origin/%%' | sort | tee /tmp/branches_source.txt
-          cd $DEST_REPO_DIR
+          cd "${DEST_REPO_DIR}"
           git branch --remotes --format='%(refname:short)' | sed 's%^origin/%%' | sort | tee /tmp/branches_destination.txt
 
           comm -13 /tmp/branches_source.txt /tmp/branches_destination.txt | tee /tmp/branches_delete.txt
 
+          "../${GITHUB_REPOSITORY}/.github/scripts/git_setup.sh" "${DEST_REPO}" "${{ secrets.DEST_REPO_SSH_KEY }}"
+
           for branch in $(cat /tmp/branches_delete.txt)
           do
-            echo "$branch"
-            git push origin --delete "$branch"
+            echo "${branch}"
+            git push origin --delete "${branch}"
           done
