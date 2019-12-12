@@ -35,6 +35,5 @@ jobs:
 
           for branch in $(cat /tmp/branches_delete.txt)
           do
-            echo "${branch}"
             git push origin --delete "${branch}"
           done
