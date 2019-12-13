@@ -19,15 +19,15 @@ class BundlesFinderTest {
     @Test
     void findBundles() {
         List<FsBundle> actual = new BundlesFinder()
-                .findBundles(path("src/test/resources/bundles"))
+                .findDipBundles(path("src/test/resources/bundles/dip"))
                 .sorted(Comparator.comparing(FsBundle::getPath))
                 .collect(Collectors.toList());
 
         List<FsBundle> expected = Arrays.asList(
-                new FsBundle(path("src/test/resources/bundles/vendor1/bundle1")),
-                new FsBundle(path("src/test/resources/bundles/vendor1/bundle2")),
-                new FsBundle(path("src/test/resources/bundles/vendor2/bundle1")),
-                new FsBundle(path("src/test/resources/bundles/vendor2/bundle2"))
+                new FsBundle(path("src/test/resources/bundles/dip/vendor1/bundle1/0.0.1")),
+                new FsBundle(path("src/test/resources/bundles/dip/vendor1/bundle2/0.0.1")),
+                new FsBundle(path("src/test/resources/bundles/dip/vendor2/bundle1/0.0.1")),
+                new FsBundle(path("src/test/resources/bundles/dip/vendor2/bundle2/0.0.1"))
         );
 
         assertEquals(expected, actual);
@@ -36,7 +36,7 @@ class BundlesFinderTest {
     @Test
     @SuppressWarnings("ResultOfMethodCallIgnored")  // Streams are lazily evaluated, .collect() is needed
     void unexpectedFile() {
-        Stream<FsBundle> bundles = new BundlesFinder().findBundles(path("src/test/resources/bundles_unexpected_file"));
+        Stream<FsBundle> bundles = new BundlesFinder().findDipBundles(path("src/test/resources/bundles_unexpected_file"));
         assertThatThrownBy(() -> bundles.collect(Collectors.toList()))
                 .isInstanceOf(ValidationException.class)
                 .hasMessageContaining("Path is not a directory: ");
@@ -44,7 +44,7 @@ class BundlesFinderTest {
 
     @Test
     void directoryDoesNotExist() {
-        assertThatThrownBy(() -> new BundlesFinder().findBundles(path("this/path/does/not/exist")))
+        assertThatThrownBy(() -> new BundlesFinder().findDipBundles(path("this/path/does/not/exist")))
                 .isInstanceOf(UncheckedIOException.class)
                 .hasMessageContaining("Listing of directory failed: ");
     }

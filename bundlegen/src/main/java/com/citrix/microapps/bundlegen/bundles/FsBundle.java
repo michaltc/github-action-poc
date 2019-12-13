@@ -3,15 +3,15 @@ package com.citrix.microapps.bundlegen.bundles;
 import java.net.URI;
 import java.nio.file.Path;
 
+import static com.citrix.microapps.bundlegen.bundles.FsConstants.ARCHIVE_EXTENSION;
+import static com.citrix.microapps.bundlegen.bundles.FsConstants.METADATA_FILE;
+
 /**
- * One bundle located in file system.
+ * One DIP bundle located in file system.
  * <p>
- * The structure of directories is `.../vendor/id/`.
+ * The structure of directories is `.../vendor/id/version/...`.
  */
 public class FsBundle {
-    private static final String ARCHIVE_EXTENSION = ".zip";
-    private static final String METADATA_FILE = "metadata.json";
-
     private final Path path;
 
     public FsBundle(Path path) {
@@ -23,15 +23,19 @@ public class FsBundle {
     }
 
     public String getVendor() {
-        return path.getParent().getFileName().toString();
+        return path.getParent().getParent().getFileName().toString();
     }
 
     public String getId() {
+        return path.getParent().getFileName().toString();
+    }
+
+    public String getVersion() {
         return path.getFileName().toString();
     }
 
     public String getArchiveName() {
-        return getVendor() + "_" + getId();
+        return getVendor() + "_" + getId() + "_" + getVersion();
     }
 
     public Path getArchivePath(Path archivesDir) {

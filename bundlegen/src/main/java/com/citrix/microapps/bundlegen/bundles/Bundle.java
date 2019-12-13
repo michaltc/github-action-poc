@@ -29,6 +29,8 @@ public class Bundle {
             throw new ValidationException("Bundle ID from FS structure does not match metadata: "
                     + fs + ", fs " + fs.getId() + ", metadata " + metadata.getId());
         }
+
+        // TODO: Version check
     }
 
     public FsBundle getFs() {
