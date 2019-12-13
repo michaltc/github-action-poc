@@ -11,20 +11,15 @@ import com.citrix.microapps.bundlegen.ValidationException;
 
 /**
  * Find all bundles in a directory tree with the standard structure.
- *
- * <pre>
- * root
- *   - vendor
- *      - bundle
- *      - bundle
- *   - vendor
- *      - bundle
- * </pre>
  */
 public class BundlesFinder {
-    public Stream<FsBundle> findBundles(Path rootDirectory) {
-        return listDirectSubdirectories(rootDirectory)    // vendors
-                .flatMap(this::listDirectSubdirectories)  // bundle IDs
+    /**
+     * DIP bundles use 3 levels of directories: vendor - bundle - version.
+     */
+    public Stream<FsBundle> findDipBundles(Path rootDirectory) {
+        return listDirectSubdirectories(rootDirectory)    // vendor
+                .flatMap(this::listDirectSubdirectories)  // bundle ID
+                .flatMap(this::listDirectSubdirectories)  // version
                 .map(FsBundle::new);
     }
 

@@ -12,13 +12,14 @@ import com.citrix.microapps.bundlegen.bundles.BundlesFinder;
 import com.citrix.microapps.bundlegen.bundles.BundlesProcessor;
 import com.citrix.microapps.bundlegen.pojo.MetadataOut;
 
+import static com.citrix.microapps.bundlegen.bundles.FsConstants.ARCHIVES_DIR;
+import static com.citrix.microapps.bundlegen.bundles.FsConstants.BUNDLES_JSON;
+import static com.citrix.microapps.bundlegen.bundles.FsConstants.DIP_DIR;
+
 /**
  * Application runner with `main()`.
  */
 class BundlegenMain {
-    public static final String ARCHIVES_DIR = "archives";
-    public static final String BUNDLES_JSON = "bundles.json";
-
     public static void main(String[] args) {
         if (args.length < 3) {
             System.err.println("Usage:   bundlegen bundles-dir dist-dir link-bundles");
@@ -42,10 +43,11 @@ class BundlegenMain {
         createDirectories(distDir);
         createDirectories(archivesDir);
 
+        BundlesFinder finder = new BundlesFinder();
         BundlesProcessor processor = new BundlesProcessor();
 
-        List<MetadataOut> allBundles = new BundlesFinder()
-                .findBundles(bundlesDir)
+        List<MetadataOut> allBundles = finder
+                .findDipBundles(bundlesDir.resolve(DIP_DIR))
                 .map(bundle -> processor.processOneBundle(bundle, archivesDir, bundlesRepository))
                 .collect(Collectors.toList());
 

@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,13 +17,12 @@ import org.junit.jupiter.api.io.TempDir;
 import static com.citrix.microapps.bundlegen.TestUtils.path;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ArchiveBuilderTest {
-    private static final FsBundle TEST_BUNDLE = new FsBundle(path("src/test/resources/bundles/vendor1/bundle1"));
+    private static final FsBundle TEST_BUNDLE =
+            new FsBundle(path("src/test/resources/bundles/dip/vendor1/bundle1/0.0.1"));
 
     private List<String> listEntriesInZip(byte[] content) throws IOException {
         List<String> result = new ArrayList<>();
@@ -45,18 +43,18 @@ class ArchiveBuilderTest {
      */
     private void assertContent(byte[] content) {
         List<String> expectedEntries = Arrays.asList(
-                "vendor1_bundle1/i18n/de.json",
-                "vendor1_bundle1/i18n/en.json",
-                "vendor1_bundle1/i18n/es.json",
-                "vendor1_bundle1/i18n/fr.json",
-                "vendor1_bundle1/i18n/ja.json",
-                "vendor1_bundle1/i18n/nl.json",
-                "vendor1_bundle1/i18n/zh-CN.json",
-                "vendor1_bundle1/metadata.json"
+                "vendor1_bundle1_0.0.1/i18n/de.json",
+                "vendor1_bundle1_0.0.1/i18n/en.json",
+                "vendor1_bundle1_0.0.1/i18n/es.json",
+                "vendor1_bundle1_0.0.1/i18n/fr.json",
+                "vendor1_bundle1_0.0.1/i18n/ja.json",
+                "vendor1_bundle1_0.0.1/i18n/nl.json",
+                "vendor1_bundle1_0.0.1/i18n/zh-CN.json",
+                "vendor1_bundle1_0.0.1/metadata.json"
         );
 
         assertAll(
-                () -> assertEquals("42723202d7010177e2d4e11ec377a093", new ArchiveBuilder().md5Hex(content),
+                () -> assertEquals("7ea289396d9ae1526a74160a3d6a0ba1", new ArchiveBuilder().md5Hex(content),
                         "Produced zip should be always exactly same on byte level"),
                 () -> assertEquals(expectedEntries, listEntriesInZip(content))
         );
@@ -83,7 +81,7 @@ class ArchiveBuilderTest {
         byte[] content = builder.buildArchive(TEST_BUNDLE);
         Path path = builder.storeArchive(tempDir, TEST_BUNDLE, content);
 
-        assertEquals(tempDir.resolve("vendor1").resolve("vendor1_bundle1.zip"), path);
+        assertEquals(tempDir.resolve("vendor1").resolve("vendor1_bundle1_0.0.1.zip"), path);
         assertTrue(Files.exists(path), "Path should exist: " + path);
 
         byte[] loadedContent = Files.readAllBytes(path);
