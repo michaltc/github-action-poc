@@ -6,6 +6,9 @@ Citrix Workspace Microapps
 - Source repository: https://github.com/michaltc/workspace-microapps/
 - Generated destination repository: https://github.com/michaltc/workspace-microapps-bundles/
 
+![](https://github.com/michaltc/workspace-microapps/workflows/Prepare%20bundles/badge.svg)
+![](https://github.com/michaltc/workspace-microapps/workflows/Delete%20obsolete%20branches/badge.svg)
+
 
 High level design
 -----------------
