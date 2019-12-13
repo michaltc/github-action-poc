@@ -71,13 +71,6 @@ https://github.com/michaltc/workspace-microapps/settings/branch_protection_rules
 - Disable `Allow deletions`.
 
 
-### Enable only local actions 
-
-https://github.com/michaltc/workspace-microapps/settings/actions
-
-- Select `Enable local Actions only for this repository`.
-
-
 Development
 -----------
 
