@@ -4,24 +4,11 @@ package com.citrix.microapps.bundlegen.bundles;
  * Bundle catalog doesn't match expected structure or is somehow broken.
  */
 public class ValidationException extends RuntimeException {
-    public ValidationException() {
-        super();
+    public ValidationException(FsBundle bundle, String message) {
+        super(bundle + ": " + message);
     }
 
-    public ValidationException(String message) {
-        super(message);
-    }
-
-    public ValidationException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ValidationException(Throwable cause) {
-        super(cause);
-    }
-
-    protected ValidationException(String message, Throwable cause, boolean enableSuppression,
-                                  boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public ValidationException(FsBundle bundle, String message, Throwable cause) {
+        super(bundle + ": " + message, cause);
     }
 }

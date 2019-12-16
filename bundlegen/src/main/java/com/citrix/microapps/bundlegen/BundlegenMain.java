@@ -10,7 +10,6 @@ import com.citrix.microapps.bundlegen.bundles.BundlesArchiver;
 import com.citrix.microapps.bundlegen.bundles.BundlesFinder;
 import com.citrix.microapps.bundlegen.bundles.BundlesLoader;
 import com.citrix.microapps.bundlegen.bundles.BundlesProcessor;
-import com.citrix.microapps.bundlegen.bundles.ValidationException;
 
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.ARCHIVES_DIR;
 
@@ -35,7 +34,7 @@ class BundlegenMain {
                         : args[2] + "/" + ARCHIVES_DIR);
 
         if (!Files.isDirectory(bundlesDir) || !Files.isReadable(bundlesDir)) {
-            throw new ValidationException("Input path with bundles does not exist or is not a readable directory: " + bundlesDir);
+            throw new RuntimeException("Input path with bundles does not exist or is not a readable directory: " + bundlesDir);
         }
 
         createDirectories(distDir);
@@ -56,7 +55,7 @@ class BundlegenMain {
         try {
             Files.createDirectories(directory);
         } catch (IOException e) {
-            throw new ValidationException("Creation of directory failed: " + directory, e);
+            throw new RuntimeException("Creation of directory failed: " + directory, e);
         }
     }
 }

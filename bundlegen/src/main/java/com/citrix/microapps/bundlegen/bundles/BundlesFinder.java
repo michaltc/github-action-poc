@@ -54,7 +54,7 @@ public class BundlesFinder {
         if (Files.isDirectory(path)) {
             return true;
         } else {
-            throw new ValidationException("Path is not a directory: " + path);
+            throw new RuntimeException("Path is not a directory: " + path);
         }
     }
 }
