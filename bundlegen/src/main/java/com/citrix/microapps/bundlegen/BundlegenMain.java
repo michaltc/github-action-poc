@@ -45,7 +45,11 @@ class BundlegenMain {
         BundlesLoader loader = new BundlesLoader();
         BundlesArchiver archiver = new BundlesArchiver(archivesDir);
         BundlesProcessor processor = new BundlesProcessor(finder, loader, archiver, distDir, bundlesRepository);
-        processor.processAllBundles();
+
+        if (!processor.processAllBundles()) {
+            System.err.println("Bundles processing failed.");
+            System.exit(1);
+        }
     }
 
     private static void createDirectories(Path directory) {
