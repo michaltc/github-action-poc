@@ -7,6 +7,9 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.citrix.microapps.bundlegen.pojo.Bundles;
 import com.citrix.microapps.bundlegen.pojo.MetadataOut;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,6 +21,8 @@ import static com.citrix.microapps.bundlegen.bundles.FsConstants.BUNDLES_JSON;
  * Reader of input bundles and writer of the output ones.
  */
 public class BundlesProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(BundlesProcessor.class);
+
     private static final ObjectWriter METADATA_WRITER = new ObjectMapper()
             .writerWithDefaultPrettyPrinter();
 
@@ -51,7 +56,7 @@ public class BundlesProcessor {
                 .collect(Collectors.toList());
 
         if (!issues.isEmpty()) {
-            System.err.println("Bundles validation failed: " + issues.size() + " issues detected");
+            logger.error("Bundles validation failed: {} issues detected", issues.size());
             issues.forEach(this::reportIssue);
             return false;
         }
@@ -65,31 +70,31 @@ public class BundlesProcessor {
     }
 
     private void reportIssue(ValidationException issue) {
-        System.err.println("Issue in bundle: " + issue.getMessage());
+        logger.error("Issue in bundle: {}", issue.getMessage());
 
         Throwable cause = issue.getCause();
         while (cause != null) {
-            System.err.println("\tCause: " + cause);
+            logger.error("\tCause: {}", cause.toString()); // No stack trace for now
             cause = cause.getCause();
         }
     }
 
     public MetadataOut processOneBundle(Bundle bundle) {
-        System.out.println("Archiving bundle: " + bundle);
+        logger.info("Archiving bundle: {}", bundle);
         byte[] content = archiver.buildArchive(bundle.getFs());
         Path archivePath = archiver.storeArchive(bundle.getFs(), content);
         String md5Hex = BundlesArchiver.md5Hex(content);
         URI downloadUrl = bundle.getFs().getDownloadUrl(bundlesRepository);
-        MetadataOut metadataOut = new MetadataOut(bundle.getMetadata(), downloadUrl, md5Hex);
-        System.out.println("Bundle archived: " + archivePath + ", " + md5Hex);
-        return metadataOut;
+        logger.info("Bundle archived: {}, {} B, {}", archivePath, content.length, md5Hex);
+
+        return new MetadataOut(bundle.getMetadata(), downloadUrl, md5Hex);
     }
 
     public void writeBundlesJson(List<MetadataOut> allBundles, Path bundlesJson) {
         try {
+            logger.info("Storing output metadata: {} bundles, {}", allBundles.size(), bundlesJson);
             Bundles bundles = new Bundles(allBundles);
             METADATA_WRITER.writeValue(bundlesJson.toFile(), bundles);
-            System.out.println("Metadata generated: " + bundlesJson);
         } catch (IOException e) {
             throw new UncheckedIOException("Writing bundles JSON failed", e);
         }

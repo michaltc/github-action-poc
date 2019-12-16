@@ -21,9 +21,16 @@
 
         <jackson.version>2.10.1</jackson.version>
         <junit.jupiter.version>5.5.2</junit.jupiter.version>
+        <logback.version>1.2.3</logback.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
