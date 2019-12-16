@@ -1,8 +1,12 @@
 package com.citrix.microapps.bundlegen.pojo;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
+import com.citrix.microapps.bundlegen.bundles.FsBundle;
+import com.citrix.microapps.bundlegen.bundles.ValidationException;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,6 +14,17 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Metadata of a bundle loaded from `metadata.json`.
  */
 public class MetadataIn {
+    // e.g. `id: "com.sapho.services.salesforce.SalesforceService"`
+    private static final Pattern ID_PATTERN = Pattern.compile("[a-zA-Z0-9]+(?:\\.[a-zA-Z0-9]+)*");
+
+    // e.g. `created: "2019-18-16T00:00:00"`
+    private static final Pattern DATE_PATTERN =
+            Pattern.compile("[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}");
+
+    // e.g. `version: "2.5.0"`
+    // e.g. `masVersion: "0.8.0"`
+    private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(?:\\.[0-9]+)*");
+
     private final Type type;
     private final String vendor;
     private final String id;
@@ -59,9 +74,31 @@ public class MetadataIn {
         this.apps = apps;
         this.vaResolvers = vaResolvers;
         this.metadata = metadata;
+    }
 
-        // TODO: Validate format
-        // "created": "2019-18-16T00:00:00",
+    public List<ValidationException> validate(FsBundle bundle) {
+        ArrayList<ValidationException> issues = new ArrayList<>();
+
+        validate(bundle, issues, ID_PATTERN, "id", id);
+        validate(bundle, issues, DATE_PATTERN, "created", created);
+        validate(bundle, issues, VERSION_PATTERN, "version", version);
+        validate(bundle, issues, VERSION_PATTERN, "masVersion", masVersion);
+
+        // TODO: Rules for other validations.
+
+        return issues;
+    }
+
+    private void validate(FsBundle bundle,
+                          ArrayList<ValidationException> issues,
+                          Pattern pattern,
+                          String field,
+                          String value) {
+        if (!pattern.matcher(value).matches()) {
+            String message = String.format("Invalid value: field `%s`, value `%s`, pattern `%s`", field, value,
+                    pattern);
+            issues.add(new ValidationException(bundle, message));
+        }
     }
 
     public Type getType() {
