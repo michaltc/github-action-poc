@@ -1,11 +1,9 @@
 package com.citrix.microapps.bundlegen.bundles;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
 import com.citrix.microapps.bundlegen.pojo.MetadataIn;
-import com.citrix.microapps.bundlegen.pojo.MetadataOut;
 
 /**
  * Bundle with all information from filesystem and metadata file.
@@ -32,22 +30,6 @@ public class Bundle {
 
     public List<ValidationException> getIssues() {
         return issues;
-    }
-
-    public MetadataOut toBundlesMetadata(URI bundlesRepository, String md5Hex) {
-        MetadataIn m = getMetadata();
-        return new MetadataOut(
-                m.getId(),
-                m.getVendor(),
-                m.getTitle(),
-                m.getDescription(),
-                m.getVersion(),
-                m.getMaServerVersion(),
-                m.getCategories(),
-                m.getExportedTimestamp(),
-                m.getMicroapps(),
-                fs.getArchiveUrl(bundlesRepository),
-                md5Hex);
     }
 
     @Override

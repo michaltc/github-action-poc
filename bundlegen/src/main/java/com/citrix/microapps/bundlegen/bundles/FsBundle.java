@@ -44,7 +44,7 @@ public class FsBundle {
                 .resolve(getArchiveName() + ARCHIVE_EXTENSION);
     }
 
-    public URI getArchiveUrl(URI bundlesRepository) {
+    public URI getDownloadUrl(URI bundlesRepository) {
         String repo = bundlesRepository.toString();
         String repoSlash = repo.endsWith("/") ? repo : repo + "/";
         return URI.create(repoSlash + getVendor() + "/" + getArchiveName() + ARCHIVE_EXTENSION);
