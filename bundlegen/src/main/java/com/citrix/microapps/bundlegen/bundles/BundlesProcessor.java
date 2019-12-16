@@ -40,17 +40,28 @@ public class BundlesProcessor {
         this.bundlesRepository = bundlesRepository;
     }
 
-    public void processAllBundles() {
+    public boolean processAllBundles() {
         List<Bundle> allBundles = finder
                 .findDipBundles()
                 .map(loader::loadDipBundle)
                 .collect(Collectors.toList());
+
+        List<ValidationException> issues = allBundles.stream()
+                .flatMap(bundle -> bundle.getIssues().stream())
+                .collect(Collectors.toList());
+
+        if (!issues.isEmpty()) {
+            System.out.println("Validation failed: " + issues.size() + " issues detected");
+            issues.forEach(Throwable::printStackTrace);
+            return false;
+        }
 
         List<MetadataOut> archivedBundles = allBundles.stream()
                 .map(this::processOneBundle)
                 .collect(Collectors.toList());
 
         writeBundlesJson(archivedBundles, distDir.resolve(BUNDLES_JSON));
+        return true;
     }
 
     public MetadataOut processOneBundle(Bundle bundle) {
