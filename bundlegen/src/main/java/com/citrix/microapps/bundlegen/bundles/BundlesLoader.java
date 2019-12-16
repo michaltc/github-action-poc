@@ -12,6 +12,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.citrix.microapps.bundlegen.pojo.MetadataIn;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,12 +24,15 @@ import com.fasterxml.jackson.databind.ObjectReader;
  * Loader and validator of bundles.
  */
 public class BundlesLoader {
+    private static final Logger logger = LoggerFactory.getLogger(BundlesLoader.class);
+
     private static final ObjectReader METADATA_READER = new ObjectMapper()
             .reader()
             .with(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES)
             .forType(MetadataIn.class);
 
     public Bundle loadDipBundle(FsBundle bundle) {
+        logger.info("Loading bundle: {}", bundle);
         List<ValidationException> issues = new ArrayList<>();
 
         try {
@@ -44,12 +50,13 @@ public class BundlesLoader {
 
     private Optional<MetadataIn> loadMetadata(List<ValidationException> issues, FsBundle bundle) {
         Path metadataPath = bundle.getMetadataPath();
+        logger.info("Loading bundle metadata: {}", metadataPath);
 
         try {
             MetadataIn metadata = METADATA_READER.readValue(metadataPath.toFile());
             return Optional.of(metadata);
         } catch (IOException e) {
-            issues.add(new ValidationException(bundle, "Reading of bundle metadata failed: " + metadataPath, e));
+            issues.add(new ValidationException(bundle, "Loading of bundle metadata failed: " + metadataPath, e));
             return Optional.empty();
         }
     }

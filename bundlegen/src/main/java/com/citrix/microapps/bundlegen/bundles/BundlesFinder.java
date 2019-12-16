@@ -7,12 +7,17 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.DIP_DIR;
 
 /**
  * Find all bundles in a directory tree with the standard structure.
  */
 public class BundlesFinder {
+    private static final Logger logger = LoggerFactory.getLogger(BundlesFinder.class);
+
     private final Path dipsDir;
 
     public BundlesFinder(Path bundlesDir) {
@@ -23,6 +28,7 @@ public class BundlesFinder {
      * DIP bundles use 3 levels of directories: vendor - bundle - version.
      */
     public Stream<FsBundle> findDipBundles() {
+        logger.info("Searching for all DIP bundles: {}", dipsDir);
         return listDirectSubdirectories(dipsDir)          // vendor
                 .flatMap(this::listDirectSubdirectories)  // bundle ID
                 .flatMap(this::listDirectSubdirectories)  // version

@@ -7,7 +7,7 @@ import static com.citrix.microapps.bundlegen.bundles.FsConstants.ARCHIVE_EXTENSI
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.METADATA_FILE;
 
 /**
- * One DIP bundle located in file system.
+ * One DIP bundle located in filesystem.
  * <p>
  * The structure of directories is `.../vendor/id/version/...`.
  */

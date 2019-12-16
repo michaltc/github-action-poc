@@ -6,6 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.citrix.microapps.bundlegen.bundles.BundlesArchiver;
 import com.citrix.microapps.bundlegen.bundles.BundlesFinder;
 import com.citrix.microapps.bundlegen.bundles.BundlesLoader;
@@ -17,11 +20,17 @@ import static com.citrix.microapps.bundlegen.bundles.FsConstants.ARCHIVES_DIR;
  * Application runner with `main()`.
  */
 class BundlegenMain {
+    private static final Logger logger = LoggerFactory.getLogger(BundlegenMain.class);
+
     public static void main(String[] args) {
+        logger.debug("========== Main method started ==========");
+
         if (args.length < 3) {
-            System.err.println("Usage:   bundlegen bundles-dir dist-dir link-bundles");
-            System.err.println("Example: bundlegen bundles bundles-dist https://github" +
+            logger.info("Usage:   bundlegen bundles-dir dist-dir link-bundles");
+            logger.info("Example: bundlegen bundles bundles-dist https://github" +
                     ".com/michaltc/workspace-microapps-bundles/tree/master/bundles/");
+
+            logger.error("Missing mandatory arguments");
             System.exit(1);
         }
 
@@ -46,9 +55,11 @@ class BundlegenMain {
         BundlesProcessor processor = new BundlesProcessor(finder, loader, archiver, distDir, bundlesRepository);
 
         if (!processor.processAllBundles()) {
-            System.err.println("Bundles processing failed.");
+            logger.error("Bundles processing failed");
             System.exit(1);
         }
+
+        logger.debug("========== Everything done, exiting main method ==========");
     }
 
     private static void createDirectories(Path directory) {
