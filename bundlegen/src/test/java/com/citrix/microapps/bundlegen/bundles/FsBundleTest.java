@@ -26,11 +26,11 @@ class FsBundleTest {
                         bundle.getArchivePath(Paths.get("somewhere", "archives"))),
                 () -> assertEquals(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob/master" +
                                 "/bundles/archives/vendor/vendor_id_version.zip"),
-                        bundle.getArchiveUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
+                        bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
                                 "/master/bundles/archives/"))),
                 () -> assertEquals(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob/master" +
                                 "/bundles/archives/vendor/vendor_id_version.zip"),
-                        bundle.getArchiveUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
+                        bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
                                 "/master/bundles/archives"))),
                 () -> assertEquals(Paths.get("test/dip/vendor/id/version/metadata.json"), bundle.getMetadataPath()),
                 () -> assertEquals("test/dip/vendor/id/version", bundle.toString())

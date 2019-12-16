@@ -1,17 +1,49 @@
 {
-  "id": "servicenow",
-  "vendor": "citrix",
-  "title": "ServiceNow",
-  "description": "ServiceNow lorem ipsum dolor sit amet.",
-  "version": "0.0.1",
-  "maServerVersion": "0.0.1",
+  "type": "DIP",
+  "vendor": "Citrix",
+  "id": "com.sapho.services.salesforce.SalesforceService",
+  "version": "2.5.0",
+  "title": "Salesforce",
+  "description": "Salesforce lets you build a mobile app connected to your Salesforce instance.",
+  "iconUrl": "https://ctx-ws-cdn.cloud.com/assets/microapps/exported/Salesforce.43b28006ce57d083904eaa95297a166d.svg",
+  "masVersion": "0.8.0",
   "categories": [
-    "INTERNAL_DEVELOPMENT"
+    "INTERNAL_DEVELOPMENT",
+    "WEB_SERVICES"
   ],
-  "exportedTimestamp": 1574674488,
-  "microapps": [
+  "created": "2019-18-16T00:00:00",
+  "supportsOAuthForActions": true,
+  "i18nLanguages": [
+    "en"
+  ],
+  "apps": [
     {
-      "title": "Assign ticket"
+      "uuid": "7c1f851b-41bb-4fc6-8356-57fc7281744f",
+      "title": "Approvals"
+    },
+    {
+      "uuid": "7c1f851b-41bb-4fc6-8356-57fc7281744f",
+      "title": "Create Lead",
+      "action": true
+    }
+  ],
+  "vaResolvers": [
+    {
+      "uuid": "7c1f851b-41bb-4fc6-8356-57fc7281744f"
+    }
+  ],
+  "metadata": [
+    {
+      "tag": "privacyUrl",
+      "value": ""
+    },
+    {
+      "tag": "temsOfUseUrl",
+      "value": ""
+    },
+    {
+      "tag": "helpUrl",
+      "value": "https://docs.citrix.com/en-us/preview/citrix-workspace-microapps-developer-guide.html"
     }
   ]
 }

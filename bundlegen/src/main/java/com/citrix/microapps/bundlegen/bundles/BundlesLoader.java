@@ -22,8 +22,6 @@ import com.fasterxml.jackson.databind.ObjectReader;
 public class BundlesLoader {
     private static final ObjectReader METADATA_READER = new ObjectMapper()
             .reader()
-            .with(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-            .with(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
             .with(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES)
             .forType(MetadataIn.class);
 

@@ -68,7 +68,7 @@ public class BundlesProcessor {
         System.err.println("Issue in bundle: " + issue.getMessage());
 
         Throwable cause = issue.getCause();
-        while(cause != null) {
+        while (cause != null) {
             System.err.println("\tCause: " + cause);
             cause = cause.getCause();
         }
@@ -78,8 +78,9 @@ public class BundlesProcessor {
         System.out.println("Archiving bundle: " + bundle);
         byte[] content = archiver.buildArchive(bundle.getFs());
         Path archivePath = archiver.storeArchive(bundle.getFs(), content);
-        String md5Hex = archiver.md5Hex(content);
-        MetadataOut metadataOut = bundle.toBundlesMetadata(bundlesRepository, md5Hex);
+        String md5Hex = BundlesArchiver.md5Hex(content);
+        URI downloadUrl = bundle.getFs().getDownloadUrl(bundlesRepository);
+        MetadataOut metadataOut = new MetadataOut(bundle.getMetadata(), downloadUrl, md5Hex);
         System.out.println("Bundle archived: " + archivePath + ", " + md5Hex);
         return metadataOut;
     }
