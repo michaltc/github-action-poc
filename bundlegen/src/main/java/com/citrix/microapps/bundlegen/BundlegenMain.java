@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.LoggerContext;
 import com.citrix.microapps.bundlegen.bundles.BundlesArchiver;
 import com.citrix.microapps.bundlegen.bundles.BundlesFinder;
 import com.citrix.microapps.bundlegen.bundles.BundlesLoader;
@@ -23,7 +24,8 @@ class BundlegenMain {
     private static final Logger logger = LoggerFactory.getLogger(BundlegenMain.class);
 
     public static void main(String[] args) {
-        logger.debug("========== Main method started ==========");
+        logLifeCycleEvent("STARTING APPLICATION");
+        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> logger.error("Uncaught exception: {}", thread, e));
 
         if (args.length < 3) {
             logger.info("Usage:   bundlegen bundles-dir dist-dir link-bundles");
@@ -43,7 +45,8 @@ class BundlegenMain {
                         : args[2] + "/" + ARCHIVES_DIR);
 
         if (!Files.isDirectory(bundlesDir) || !Files.isReadable(bundlesDir)) {
-            throw new RuntimeException("Input path with bundles does not exist or is not a readable directory: " + bundlesDir);
+            logger.error("Input path with bundles does not exist or is not a readable directory: {}", bundlesDir);
+            System.exit(1);
         }
 
         createDirectories(distDir);
@@ -59,7 +62,9 @@ class BundlegenMain {
             System.exit(1);
         }
 
-        logger.debug("========== Everything done, exiting main method ==========");
+        logLifeCycleEvent("APPLICATION STOPPED");
+        logger.debug("Stopping logging subsystem");
+        ((LoggerContext) LoggerFactory.getILoggerFactory()).stop();
     }
 
     private static void createDirectories(Path directory) {
@@ -68,5 +73,9 @@ class BundlegenMain {
         } catch (IOException e) {
             throw new RuntimeException("Creation of directory failed: " + directory, e);
         }
+    }
+
+    private static void logLifeCycleEvent(String message) {
+        logger.info("====================== {} ======================", message.toUpperCase());
     }
 }
