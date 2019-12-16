@@ -51,8 +51,8 @@ public class BundlesProcessor {
                 .collect(Collectors.toList());
 
         if (!issues.isEmpty()) {
-            System.out.println("Validation failed: " + issues.size() + " issues detected");
-            issues.forEach(Throwable::printStackTrace);
+            System.err.println("Bundles validation failed: " + issues.size() + " issues detected");
+            issues.forEach(this::reportIssue);
             return false;
         }
 
@@ -62,6 +62,16 @@ public class BundlesProcessor {
 
         writeBundlesJson(archivedBundles, distDir.resolve(BUNDLES_JSON));
         return true;
+    }
+
+    private void reportIssue(ValidationException issue) {
+        System.err.println("Issue in bundle: " + issue.getMessage());
+
+        Throwable cause = issue.getCause();
+        while(cause != null) {
+            System.err.println("\tCause: " + cause);
+            cause = cause.getCause();
+        }
     }
 
     public MetadataOut processOneBundle(Bundle bundle) {
