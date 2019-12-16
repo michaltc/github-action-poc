@@ -22,10 +22,17 @@ public class FsConstants {
     /**
      * Only these files and directories are allowed in the bundle.
      */
-    public static final Set<Path> BUNDLE_ENTRIES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+    public static final Set<Path> BUNDLE_MANDATORY_FILES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            Paths.get(METADATA_FILE),
+            Paths.get("template.sapp")
+    )));
+
+    /**
+     * Only these files and directories are allowed in the bundle.
+     */
+    public static final Set<Path> BUNDLE_ALLOWED_FILES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             Paths.get(METADATA_FILE),
             Paths.get("template.sapp"),
-            Paths.get(TRANSLATIONS_DIR),
             Paths.get(TRANSLATIONS_DIR, "de.json"),
             Paths.get(TRANSLATIONS_DIR, "en.json"),
             Paths.get(TRANSLATIONS_DIR, "es.json"),

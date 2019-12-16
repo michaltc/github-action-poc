@@ -1,4 +1,4 @@
-package com.citrix.microapps.bundlegen;
+package com.citrix.microapps.bundlegen.bundles;
 
 /**
  * Bundle catalog doesn't match expected structure or is somehow broken.

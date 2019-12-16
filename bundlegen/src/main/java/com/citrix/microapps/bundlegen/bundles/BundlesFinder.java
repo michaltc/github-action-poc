@@ -7,8 +7,6 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.citrix.microapps.bundlegen.ValidationException;
-
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.DIP_DIR;
 
 /**

@@ -6,9 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.citrix.microapps.bundlegen.bundles.BundlesArchiver;
 import com.citrix.microapps.bundlegen.bundles.BundlesFinder;
-import com.citrix.microapps.bundlegen.bundles.BundlesParser;
+import com.citrix.microapps.bundlegen.bundles.BundlesLoader;
 import com.citrix.microapps.bundlegen.bundles.BundlesProcessor;
+import com.citrix.microapps.bundlegen.bundles.ValidationException;
 
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.ARCHIVES_DIR;
 
@@ -40,8 +42,9 @@ class BundlegenMain {
         createDirectories(archivesDir);
 
         BundlesFinder finder = new BundlesFinder(bundlesDir);
-        BundlesParser parser = new BundlesParser();
-        BundlesProcessor processor = new BundlesProcessor(finder, parser, distDir, bundlesRepository);
+        BundlesLoader loader = new BundlesLoader();
+        BundlesArchiver archiver = new BundlesArchiver(archivesDir);
+        BundlesProcessor processor = new BundlesProcessor(finder, loader, archiver, distDir, bundlesRepository);
         processor.processAllBundles();
     }
 

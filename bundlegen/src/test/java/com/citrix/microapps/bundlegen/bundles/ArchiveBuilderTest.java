@@ -54,32 +54,32 @@ class ArchiveBuilderTest {
         );
 
         assertAll(
-                () -> assertEquals("7ea289396d9ae1526a74160a3d6a0ba1", new ArchiveBuilder().md5Hex(content),
+                () -> assertEquals("7ea289396d9ae1526a74160a3d6a0ba1", BundlesArchiver.md5Hex(content),
                         "Produced zip should be always exactly same on byte level"),
                 () -> assertEquals(expectedEntries, listEntriesInZip(content))
         );
     }
 
     @Test
-    void buildArchive() {
-        byte[] content = new ArchiveBuilder().buildArchive(TEST_BUNDLE);
+    void buildArchive(@TempDir Path tempDir) {
+        byte[] content = new BundlesArchiver(tempDir).buildArchive(TEST_BUNDLE);
         assertContent(content);
     }
 
     @Test
-    void directoryDoesNotExist() {
+    void directoryDoesNotExist(@TempDir Path tempDir) {
         FsBundle bundle = new FsBundle(path("this/path/does/not/exist"));
 
-        assertThatThrownBy(() -> new ArchiveBuilder().buildArchive(bundle))
+        assertThatThrownBy(() -> new BundlesArchiver(tempDir).buildArchive(bundle))
                 .isInstanceOf(UncheckedIOException.class)
                 .hasMessageContaining("Creation of zip archive failed: ");
     }
 
     @Test
     void buildAndStore(@TempDir Path tempDir) throws Exception {
-        ArchiveBuilder builder = new ArchiveBuilder();
+        BundlesArchiver builder = new BundlesArchiver(tempDir);
         byte[] content = builder.buildArchive(TEST_BUNDLE);
-        Path path = builder.storeArchive(tempDir, TEST_BUNDLE, content);
+        Path path = builder.storeArchive(TEST_BUNDLE, content);
 
         assertEquals(tempDir.resolve("vendor1").resolve("vendor1_bundle1_0.0.1.zip"), path);
         assertTrue(Files.exists(path), "Path should exist: " + path);

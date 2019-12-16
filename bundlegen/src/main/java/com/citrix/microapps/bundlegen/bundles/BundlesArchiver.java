@@ -23,8 +23,14 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
  * would cause unwanted growing of git repository with archives, invalidating of possible HTTP proxy caches in CDN,
  * files re-downloading, etc.
  */
-public class ArchiveBuilder {
+public class BundlesArchiver {
     private static final FileTime EPOCH = FileTime.fromMillis(0);
+
+    private final Path archivesDir;
+
+    public BundlesArchiver(Path archivesDir) {
+        this.archivesDir = archivesDir;
+    }
 
     /**
      * Build zip archive with all the files of the bundle.
@@ -64,12 +70,11 @@ public class ArchiveBuilder {
      * Expecting no `firstLetter/secondLetter/thirdLetter` subdirectories are needed. `vendor` subdirectory should be
      * enough to have max. tens or small hundreds of directories/files per directory on any level.
      *
-     * @param archivesDir top level directory for all archives
-     * @param bundle      bundle to store
-     * @param content     content of the bundle archive
+     * @param bundle  bundle to store
+     * @param content content of the bundle archive
      * @return path to the archive
      */
-    public Path storeArchive(Path archivesDir, FsBundle bundle, byte[] content) {
+    public Path storeArchive(FsBundle bundle, byte[] content) {
         Path archivePath = bundle.getArchivePath(archivesDir);
 
         try {
@@ -102,7 +107,7 @@ public class ArchiveBuilder {
         }
     }
 
-    public String md5Hex(byte[] content) {
+    public static String md5Hex(byte[] content) {
         try {
             byte[] md5 = MessageDigest.getInstance("MD5").digest(content);
             return Hex.encodeHexString(md5, true);
