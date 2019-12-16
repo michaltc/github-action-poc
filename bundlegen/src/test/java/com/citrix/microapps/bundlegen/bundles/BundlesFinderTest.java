@@ -38,7 +38,7 @@ class BundlesFinderTest {
     @Test
     void unexpectedFileInDirectories() {
         assertThatThrownBy(() -> findDipBundles(path("src/test/resources/bundles_unexpected_file")))
-                .isInstanceOf(ValidationException.class)
+                .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Path is not a directory: ");
     }
 
