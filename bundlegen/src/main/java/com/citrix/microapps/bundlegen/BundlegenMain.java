@@ -5,16 +5,12 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import com.citrix.microapps.bundlegen.bundles.BundlesFinder;
+import com.citrix.microapps.bundlegen.bundles.BundlesParser;
 import com.citrix.microapps.bundlegen.bundles.BundlesProcessor;
-import com.citrix.microapps.bundlegen.pojo.MetadataOut;
 
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.ARCHIVES_DIR;
-import static com.citrix.microapps.bundlegen.bundles.FsConstants.BUNDLES_JSON;
-import static com.citrix.microapps.bundlegen.bundles.FsConstants.DIP_DIR;
 
 /**
  * Application runner with `main()`.
@@ -43,15 +39,10 @@ class BundlegenMain {
         createDirectories(distDir);
         createDirectories(archivesDir);
 
-        BundlesFinder finder = new BundlesFinder();
-        BundlesProcessor processor = new BundlesProcessor();
-
-        List<MetadataOut> allBundles = finder
-                .findDipBundles(bundlesDir.resolve(DIP_DIR))
-                .map(bundle -> processor.processOneBundle(bundle, archivesDir, bundlesRepository))
-                .collect(Collectors.toList());
-
-        processor.writeBundlesJson(allBundles, distDir.resolve(BUNDLES_JSON));
+        BundlesFinder finder = new BundlesFinder(bundlesDir);
+        BundlesParser parser = new BundlesParser();
+        BundlesProcessor processor = new BundlesProcessor(finder, parser, distDir, bundlesRepository);
+        processor.processAllBundles();
     }
 
     private static void createDirectories(Path directory) {

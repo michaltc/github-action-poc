@@ -9,15 +9,23 @@ import java.util.stream.Stream;
 
 import com.citrix.microapps.bundlegen.ValidationException;
 
+import static com.citrix.microapps.bundlegen.bundles.FsConstants.DIP_DIR;
+
 /**
  * Find all bundles in a directory tree with the standard structure.
  */
 public class BundlesFinder {
+    private final Path dipsDir;
+
+    public BundlesFinder(Path bundlesDir) {
+        this.dipsDir = bundlesDir.resolve(DIP_DIR);
+    }
+
     /**
      * DIP bundles use 3 levels of directories: vendor - bundle - version.
      */
-    public Stream<FsBundle> findDipBundles(Path rootDirectory) {
-        return listDirectSubdirectories(rootDirectory)    // vendor
+    public Stream<FsBundle> findDipBundles() {
+        return listDirectSubdirectories(dipsDir)          // vendor
                 .flatMap(this::listDirectSubdirectories)  // bundle ID
                 .flatMap(this::listDirectSubdirectories)  // version
                 .map(FsBundle::new);
