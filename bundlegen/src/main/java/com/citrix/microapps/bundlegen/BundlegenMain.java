@@ -24,6 +24,9 @@ class BundlegenMain {
     private static final Logger logger = LoggerFactory.getLogger(BundlegenMain.class);
 
     public static void main(String[] args) {
+        // Maven injects "com.citrix.microapps.bundlegen.BundlegenMain.main()"
+        Thread.currentThread().setName("main");
+
         logLifeCycleEvent("STARTING APPLICATION");
         Thread.setDefaultUncaughtExceptionHandler((thread, e) -> logger.error("Uncaught exception: {}", thread, e));
 
