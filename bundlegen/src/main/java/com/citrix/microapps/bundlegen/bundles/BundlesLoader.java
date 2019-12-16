@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,7 @@ public class BundlesLoader {
         }
 
         Optional<MetadataIn> metadata = loadMetadata(issues, bundle);
+        issues.addAll(metadata.map(m -> m.validate(bundle)).orElseGet(Collections::emptyList));
         return new Bundle(bundle, metadata, issues);
     }
 
