@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
-import com.citrix.microapps.bundlegen.ValidationException;
-
 import static com.citrix.microapps.bundlegen.TestUtils.path;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,36 +1,25 @@
 package com.citrix.microapps.bundlegen.bundles;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
-import com.citrix.microapps.bundlegen.ValidationException;
 import com.citrix.microapps.bundlegen.pojo.MetadataIn;
 import com.citrix.microapps.bundlegen.pojo.MetadataOut;
 
 /**
  * Bundle with all information from filesystem and metadata file.
  */
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class Bundle {
     private final FsBundle fs;
-    private final MetadataIn metadata;
+    private final Optional<MetadataIn> metadata;
+    private final List<ValidationException> issues;
 
-    public Bundle(FsBundle fs, MetadataIn metadata) {
-        validate(fs, metadata);
+    public Bundle(FsBundle fs, Optional<MetadataIn> metadata, List<ValidationException> issues) {
         this.fs = fs;
         this.metadata = metadata;
-    }
-
-    private static void validate(FsBundle fs, MetadataIn metadata) {
-        if (!fs.getVendor().equals(metadata.getVendor())) {
-            throw new ValidationException("Bundle vendor from FS structure does not match metadata: "
-                    + fs + ", fs " + fs.getVendor() + ", metadata " + metadata.getVendor());
-        }
-
-        if (!fs.getId().equals(metadata.getId())) {
-            throw new ValidationException("Bundle ID from FS structure does not match metadata: "
-                    + fs + ", fs " + fs.getId() + ", metadata " + metadata.getId());
-        }
-
-        // TODO: Version check
+        this.issues = issues;
     }
 
     public FsBundle getFs() {
@@ -38,20 +27,25 @@ public class Bundle {
     }
 
     public MetadataIn getMetadata() {
-        return metadata;
+        return metadata.orElseThrow(() -> new IllegalStateException("No metadata"));
+    }
+
+    public List<ValidationException> getIssues() {
+        return issues;
     }
 
     public MetadataOut toBundlesMetadata(URI bundlesRepository, String md5Hex) {
+        MetadataIn m = getMetadata();
         return new MetadataOut(
-                metadata.getId(),
-                metadata.getVendor(),
-                metadata.getTitle(),
-                metadata.getDescription(),
-                metadata.getVersion(),
-                metadata.getMaServerVersion(),
-                metadata.getCategories(),
-                metadata.getExportedTimestamp(),
-                metadata.getMicroapps(),
+                m.getId(),
+                m.getVendor(),
+                m.getTitle(),
+                m.getDescription(),
+                m.getVersion(),
+                m.getMaServerVersion(),
+                m.getCategories(),
+                m.getExportedTimestamp(),
+                m.getMicroapps(),
                 fs.getArchiveUrl(bundlesRepository),
                 md5Hex);
     }
