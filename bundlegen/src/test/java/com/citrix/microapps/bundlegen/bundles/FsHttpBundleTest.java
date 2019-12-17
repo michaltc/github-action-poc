@@ -3,6 +3,7 @@ package com.citrix.microapps.bundlegen.bundles;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ class FsHttpBundleTest {
     @Test
     void getters() {
         Path path = Paths.get("test", "http", "vendor", "id");
-        FsBundle bundle = new FsHttpBundle(path);
+        FsBundle bundle = new FsHttpBundle(path, Collections.singletonList(Paths.get("test.txt")));
 
         assertAll(
                 () -> assertEquals(Type.HTTP, bundle.getType()),
@@ -35,7 +36,8 @@ class FsHttpBundleTest {
                         bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
                                 "/master/bundles/archives"))),
                 () -> assertEquals(Paths.get("test/http/vendor/id/metadata.json"), bundle.getMetadataPath()),
-                () -> assertEquals("test/http/vendor/id", bundle.toString())
+                () -> assertEquals("test/http/vendor/id", bundle.toString()),
+                () -> assertEquals(Collections.singletonList(Paths.get("test.txt")), bundle.getFiles())
         );
     }
 }

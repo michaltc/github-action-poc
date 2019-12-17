@@ -1,6 +1,8 @@
 package com.citrix.microapps.bundlegen.bundles;
 
 import java.nio.file.Path;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import com.citrix.microapps.bundlegen.pojo.Type;
@@ -12,9 +14,11 @@ import com.citrix.microapps.bundlegen.pojo.Type;
  */
 public class FsDipBundle implements FsBundle {
     private final Path path;
+    private final List<Path> files;
 
-    public FsDipBundle(Path path) {
+    public FsDipBundle(Path path, List<Path> files) {
         this.path = path;
+        this.files = Collections.unmodifiableList(files);
     }
 
     @Override
@@ -25,6 +29,11 @@ public class FsDipBundle implements FsBundle {
     @Override
     public Path getPath() {
         return path;
+    }
+
+    @Override
+    public List<Path> getFiles() {
+        return files;
     }
 
     @Override
@@ -56,14 +65,17 @@ public class FsDipBundle implements FsBundle {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        FsDipBundle fsBundle = (FsDipBundle) o;
+        FsDipBundle that = (FsDipBundle) o;
 
-        return path.equals(fsBundle.path);
+        if (!path.equals(that.path)) return false;
+        return files.equals(that.files);
     }
 
     @Override
     public int hashCode() {
-        return path.hashCode();
+        int result = path.hashCode();
+        result = 31 * result + files.hashCode();
+        return result;
     }
 
     @Override

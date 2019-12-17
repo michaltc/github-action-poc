@@ -2,6 +2,7 @@ package com.citrix.microapps.bundlegen.bundles;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Optional;
 
 import com.citrix.microapps.bundlegen.pojo.Type;
@@ -18,6 +19,11 @@ public interface FsBundle {
     Type getType();
 
     Path getPath();
+
+    /**
+     * All files inside the bundle, all paths are relative to its root and sorted.
+     */
+    List<Path> getFiles();
 
     String getVendor();
 

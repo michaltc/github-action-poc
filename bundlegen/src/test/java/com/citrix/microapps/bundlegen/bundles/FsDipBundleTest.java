@@ -3,6 +3,7 @@ package com.citrix.microapps.bundlegen.bundles;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ class FsDipBundleTest {
     @Test
     void getters() {
         Path path = Paths.get("test", "dip", "vendor", "id", "version");
-        FsBundle bundle = new FsDipBundle(path);
+        FsBundle bundle = new FsDipBundle(path, Collections.singletonList(Paths.get("test.txt")));
 
         assertAll(
                 () -> assertEquals(Type.DIP, bundle.getType()),
@@ -30,14 +31,15 @@ class FsDipBundleTest {
                         bundle.getArchivePath(Paths.get("somewhere", "archives"))),
                 () -> assertEquals(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob/master" +
                                 "/bundles/archives/vendor/vendor_id_version.zip"),
-                        bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
-                                "/master/bundles/archives/"))),
+                        bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles" +
+                                "/blob/master/bundles/archives/"))),
                 () -> assertEquals(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob/master" +
                                 "/bundles/archives/vendor/vendor_id_version.zip"),
-                        bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
-                                "/master/bundles/archives"))),
+                        bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles" +
+                                "/blob/master/bundles/archives"))),
                 () -> assertEquals(Paths.get("test/dip/vendor/id/version/metadata.json"), bundle.getMetadataPath()),
-                () -> assertEquals("test/dip/vendor/id/version", bundle.toString())
+                () -> assertEquals("test/dip/vendor/id/version", bundle.toString()),
+                () -> assertEquals(Collections.singletonList(Paths.get("test.txt")), bundle.getFiles())
         );
     }
 }
