@@ -71,6 +71,9 @@ public class BundlesProcessor {
         return true;
     }
 
+    /**
+     * The validations are happening in {@link BundlesLoader}, this is only reporting.
+     */
     private void reportIssue(ValidationException issue) {
         logger.error("\tBundle: {}", issue.getMessage());
 

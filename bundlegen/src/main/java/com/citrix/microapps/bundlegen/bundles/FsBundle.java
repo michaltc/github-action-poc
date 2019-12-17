@@ -4,6 +4,8 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import com.citrix.microapps.bundlegen.pojo.Type;
+
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.ARCHIVE_EXTENSION;
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.METADATA_FILE;
 
@@ -13,6 +15,8 @@ import static com.citrix.microapps.bundlegen.bundles.FsConstants.METADATA_FILE;
  * The structure of directories is `.../vendor/id/version/...`.
  */
 public interface FsBundle {
+    Type getType();
+
     Path getPath();
 
     String getVendor();

@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BundlesFinderTest {
-    private List<FsBundle> findDipBundles(Path path) {
+    private List<FsBundle> findBundles(Path path) {
         return new BundlesFinder(path)
                 .findBundles()
                 .sorted(Comparator.comparing(FsBundle::getPath))
@@ -23,13 +23,13 @@ class BundlesFinderTest {
 
     @Test
     void findBundles() {
-        List<FsBundle> actual = findDipBundles(path("src/test/resources/bundles"));
+        List<FsBundle> actual = findBundles(path("src/test/resources/bundles"));
 
         List<FsBundle> expected = Arrays.asList(
                 new FsDipBundle(path("src/test/resources/bundles/dip/vendor1/bundle1/0.0.1")),
                 new FsDipBundle(path("src/test/resources/bundles/dip/vendor1/bundle2/0.0.1")),
                 new FsDipBundle(path("src/test/resources/bundles/dip/vendor2/bundle1/0.0.1")),
-                new FsDipBundle(path("src/test/resources/bundles/dip/vendor2/bundle2/0.0.1"))
+                new FsHttpBundle(path("src/test/resources/bundles/http/vendor2/bundle2"))
         );
 
         assertEquals(expected, actual);
@@ -37,14 +37,14 @@ class BundlesFinderTest {
 
     @Test
     void unexpectedFileInDirectories() {
-        assertThatThrownBy(() -> findDipBundles(path("src/test/resources/bundles_unexpected_file")))
+        assertThatThrownBy(() -> findBundles(path("src/test/resources/bundles_unexpected_file")))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Path is not a directory: ");
     }
 
     @Test
     void directoryDoesNotExist() {
-        assertThatThrownBy(() -> findDipBundles(path("this/path/does/not/exist")))
+        assertThatThrownBy(() -> findBundles(path("this/path/does/not/exist")))
                 .isInstanceOf(UncheckedIOException.class)
                 .hasMessageContaining("Listing of directory failed: ");
     }

@@ -3,6 +3,8 @@ package com.citrix.microapps.bundlegen.bundles;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import com.citrix.microapps.bundlegen.pojo.Type;
+
 /**
  * One DIP bundle located in filesystem.
  * <p>
@@ -13,6 +15,11 @@ public class FsDipBundle implements FsBundle {
 
     public FsDipBundle(Path path) {
         this.path = path;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.DIP;
     }
 
     @Override
@@ -32,12 +39,16 @@ public class FsDipBundle implements FsBundle {
 
     @Override
     public Optional<String> getVersion() {
-        return Optional.of(path.getFileName().toString());
+        return Optional.of(getVersionInternal());
+    }
+
+    public String getVersionInternal() {
+        return path.getFileName().toString();
     }
 
     @Override
     public String getArchiveName() {
-        return getVendor() + "_" + getId() + "_" + getVersion();
+        return getVendor() + "_" + getId() + "_" + getVersionInternal();
     }
 
     @Override
