@@ -61,6 +61,8 @@ public class BundlesProcessor {
             return false;
         }
 
+        logger.info("Bundles validation successful, no issue detected");
+
         List<MetadataOut> archivedBundles = allBundles.stream()
                 .map(this::processOneBundle)
                 .collect(Collectors.toList());
@@ -70,11 +72,11 @@ public class BundlesProcessor {
     }
 
     private void reportIssue(ValidationException issue) {
-        logger.error("Issue in bundle: {}", issue.getMessage());
+        logger.error("\tBundle: {}", issue.getMessage());
 
         Throwable cause = issue.getCause();
         while (cause != null) {
-            logger.error("\tCause: {}", cause.toString()); // No stack trace for now
+            logger.error("\t\tCause: {}", cause.toString()); // No stack trace for now
             cause = cause.getCause();
         }
     }

@@ -3,6 +3,8 @@ package com.citrix.microapps.bundlegen.pojo;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 import com.citrix.microapps.bundlegen.bundles.FsBundle;
@@ -79,26 +81,53 @@ public class MetadataIn {
     public List<ValidationException> validate(FsBundle bundle) {
         ArrayList<ValidationException> issues = new ArrayList<>();
 
-        validate(bundle, issues, ID_PATTERN, "id", id);
-        validate(bundle, issues, DATE_PATTERN, "created", created);
-        validate(bundle, issues, VERSION_PATTERN, "version", version);
-        validate(bundle, issues, VERSION_PATTERN, "masVersion", masVersion);
+        validateFormat(bundle, ID_PATTERN, "id", id).ifPresent(issues::add);
+        validateFormat(bundle, DATE_PATTERN, "created", created).ifPresent(issues::add);
+        validateFormat(bundle, VERSION_PATTERN, "version", version).ifPresent(issues::add);
+        validateFormat(bundle, VERSION_PATTERN, "masVersion", masVersion).ifPresent(issues::add);
+
+        validateSync(bundle, bundle::getVendor, "vendor", vendor).ifPresent(issues::add);
+        validateSync(bundle, bundle::getId, "id", id).ifPresent(issues::add);
+        validateSync(bundle, bundle::getVersion, "version", version).ifPresent(issues::add);
 
         // TODO: Rules for other validations.
 
         return issues;
     }
 
-    private void validate(FsBundle bundle,
-                          ArrayList<ValidationException> issues,
-                          Pattern pattern,
-                          String field,
-                          String value) {
-        if (!pattern.matcher(value).matches()) {
-            String message = String.format("Invalid value: field `%s`, value `%s`, pattern `%s`", field, value,
-                    pattern);
-            issues.add(new ValidationException(bundle, message));
+    /**
+     * Validate that a value matches its expected format.
+     */
+    private Optional<ValidationException> validateFormat(FsBundle bundle,
+                                                         Pattern pattern,
+                                                         String field,
+                                                         String value) {
+        if (pattern.matcher(value).matches()) {
+            return Optional.empty();
         }
+
+        return validationIssue(bundle,
+                String.format("Invalid value: field `%s`, value `%s`, pattern `%s`", field, value, pattern));
+    }
+
+    /**
+     * Validate that value in metadata file matches name of directory in filesystem tree.
+     */
+    private Optional<ValidationException> validateSync(FsBundle bundle,
+                                                       Supplier<String> valueSupplier,
+                                                       String field,
+                                                       String value) {
+        String fsValue = valueSupplier.get();
+        if (fsValue.equals(value)) {
+            return Optional.empty();
+        }
+
+        return validationIssue(bundle,
+                String.format("Values mismatch: field `%s`, filesystem `%s` != metadata `%s`", field, fsValue, value));
+    }
+
+    private Optional<ValidationException> validationIssue(FsBundle bundle, String message) {
+        return Optional.of(new ValidationException(bundle, message));
     }
 
     public Type getType() {
