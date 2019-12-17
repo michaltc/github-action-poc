@@ -80,12 +80,12 @@ public class BundlesProcessor {
     }
 
     public MetadataOut processOneBundle(Bundle bundle) {
-        logger.info("Archiving bundle: {}", bundle);
+        logger.info("Building bundle archive: {}", bundle);
         byte[] content = archiver.buildArchive(bundle.getFs());
         Path archivePath = archiver.storeArchive(bundle.getFs(), content);
         String md5Hex = BundlesArchiver.md5Hex(content);
         URI downloadUrl = bundle.getFs().getDownloadUrl(bundlesRepository);
-        logger.info("Bundle archived: {}, {} B, {}", archivePath, content.length, md5Hex);
+        logger.info("Bundle archive created: {}, {} B, md5 {}", archivePath, content.length, md5Hex);
 
         return new MetadataOut(bundle.getMetadata(), downloadUrl, md5Hex);
     }

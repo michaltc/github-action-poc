@@ -19,7 +19,8 @@
   "apps": [
     {
       "uuid": "7c1f851b-41bb-4fc6-8356-57fc7281744f",
-      "title": "Approvals"
+      "title": "Approvals",
+      "action": false
     },
     {
       "uuid": "7c1f851b-41bb-4fc6-8356-57fc7281744f",

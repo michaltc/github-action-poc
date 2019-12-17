@@ -85,8 +85,8 @@ cloud service (at the moment of writing).
 - The tool shows usage when no arguments are passed.
 
 Changes should be always implemented in a feature branch and properly tested. **Anything that appears in `master` branch
-may be quickly visible by production system of all the customers.** Fail fast in the code to break CI/CD pipeline and
-to skip updating of the destination repository.
+may be quickly visible by production system of all customers.** Fail fast in the code to break CI/CD pipeline and to
+skip updating of the destination repository.
 
 **Bundlegen tries hard to minimize number of changes committed to the destination repository to limit its uncontrolled
 grow as much as possible.** Filesystem entries should be iterated always in the same order, zip archives should differ

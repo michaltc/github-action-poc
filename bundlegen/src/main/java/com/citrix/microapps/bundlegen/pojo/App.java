@@ -14,7 +14,7 @@ public class App {
     public App(
             @JsonProperty(value = "uuid", required = true) UUID uuid,
             @JsonProperty(value = "title", required = true) String title,
-            @JsonProperty(value = "action", defaultValue = "false") boolean action
+            @JsonProperty(value = "action", required = true) boolean action
     ) {
         this.uuid = uuid;
         this.title = title;
