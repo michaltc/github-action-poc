@@ -3,6 +3,8 @@ package com.citrix.microapps.bundlegen.bundles;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import com.citrix.microapps.bundlegen.pojo.Type;
+
 /**
  * One HTTP bundle located in filesystem.
  * <p>
@@ -13,6 +15,11 @@ public class FsHttpBundle implements FsBundle {
 
     public FsHttpBundle(Path path) {
         this.path = path;
+    }
+
+    @Override
+    public Type getType() {
+        return Type.HTTP;
     }
 
     @Override
