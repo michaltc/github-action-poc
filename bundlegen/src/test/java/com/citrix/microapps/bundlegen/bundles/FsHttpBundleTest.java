@@ -7,34 +7,35 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import com.citrix.microapps.bundlegen.pojo.Type;
 
-class FsBundleTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class FsHttpBundleTest {
     @Test
     void getters() {
-        Path path = Paths.get("test", "dip", "vendor", "id", "version");
-        FsBundle bundle = new FsDipBundle(path);
+        Path path = Paths.get("test", "http", "vendor", "id");
+        FsBundle bundle = new FsHttpBundle(path);
 
         assertAll(
+                () -> assertEquals(Type.HTTP, bundle.getType()),
                 () -> assertSame(path, bundle.getPath()),
                 () -> assertEquals("vendor", bundle.getVendor()),
                 () -> assertEquals("id", bundle.getId()),
-                () -> assertEquals(Optional.of("version"), bundle.getVersion()),
-                () -> assertEquals("vendor_id_version", bundle.getArchiveName()),
-                () -> assertEquals(Paths.get("somewhere/archives/vendor/vendor_id_version.zip"),
+                () -> assertEquals(Optional.empty(), bundle.getVersion()),
+                () -> assertEquals("vendor_id", bundle.getArchiveName()),
+                () -> assertEquals(Paths.get("somewhere/archives/vendor/vendor_id.zip"),
                         bundle.getArchivePath(Paths.get("somewhere", "archives"))),
                 () -> assertEquals(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob/master" +
-                                "/bundles/archives/vendor/vendor_id_version.zip"),
+                                "/bundles/archives/vendor/vendor_id.zip"),
                         bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
                                 "/master/bundles/archives/"))),
                 () -> assertEquals(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob/master" +
-                                "/bundles/archives/vendor/vendor_id_version.zip"),
+                                "/bundles/archives/vendor/vendor_id.zip"),
                         bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
                                 "/master/bundles/archives"))),
-                () -> assertEquals(Paths.get("test/dip/vendor/id/version/metadata.json"), bundle.getMetadataPath()),
-                () -> assertEquals("test/dip/vendor/id/version", bundle.toString())
+                () -> assertEquals(Paths.get("test/http/vendor/id/metadata.json"), bundle.getMetadataPath()),
+                () -> assertEquals("test/http/vendor/id", bundle.toString())
         );
     }
 }
