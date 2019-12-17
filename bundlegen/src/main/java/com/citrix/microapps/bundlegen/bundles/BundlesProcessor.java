@@ -72,7 +72,7 @@ public class BundlesProcessor {
     }
 
     /**
-     * The validations are happening in {@link BundlesLoader}, this is only reporting.
+     * The validations are collected in {@link BundlesLoader}, this is only reporting.
      */
     private void reportIssue(ValidationException issue) {
         logger.error("\tBundle: {}", issue.getMessage());

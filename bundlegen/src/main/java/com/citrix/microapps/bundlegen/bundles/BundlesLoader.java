@@ -119,7 +119,7 @@ public class BundlesLoader {
 
     @SuppressWarnings("DuplicatedCode")  // Refactoring would make the code much less readable
     private List<ValidationException> validateDipMetadata(FsBundle bundle, DipMetadata metadata) {
-        ArrayList<ValidationException> issues = new ArrayList<>();
+        List<ValidationException> issues = new ArrayList<>();
 
         validateFormat(bundle, ID_PATTERN, "id", metadata.getId()).ifPresent(issues::add);
         validateFormat(bundle, DATE_PATTERN, "created", metadata.getCreated()).ifPresent(issues::add);
@@ -133,6 +133,8 @@ public class BundlesLoader {
                 .flatMap(version -> validateSync(bundle, () -> version, "version", metadata.getVersion()))
                 .ifPresent(issues::add);
 
+        validateLanguages(bundle, metadata.getI18nLanguages()).ifPresent(issues::add);
+
         // TODO: Rules for other validations.
 
         return issues;
@@ -140,7 +142,7 @@ public class BundlesLoader {
 
     @SuppressWarnings("DuplicatedCode")  // Refactoring would make the code much less readable
     private List<ValidationException> validateHttpMetadata(FsBundle bundle, HttpMetadata metadata) {
-        ArrayList<ValidationException> issues = new ArrayList<>();
+        List<ValidationException> issues = new ArrayList<>();
 
         validateFormat(bundle, DATE_PATTERN, "created", metadata.getCreated()).ifPresent(issues::add);
         validateFormat(bundle, VERSION_PATTERN, "masVersion", metadata.getMasVersion()).ifPresent(issues::add);
@@ -148,6 +150,8 @@ public class BundlesLoader {
         validateSync(bundle, bundle::getType, "type", metadata.getType()).ifPresent(issues::add);
         validateSync(bundle, bundle::getVendor, "vendor", metadata.getVendor()).ifPresent(issues::add);
         validateSync(bundle, bundle::getId, "id", metadata.getId().toString()).ifPresent(issues::add);
+
+        validateLanguages(bundle, metadata.getI18nLanguages()).ifPresent(issues::add);
 
         // TODO: Rules for other validations.
 
@@ -183,6 +187,36 @@ public class BundlesLoader {
 
         return validationIssue(bundle,
                 String.format("Values mismatch: field `%s`, filesystem `%s` != metadata `%s`", field, fsValue, value));
+    }
+
+    private Optional<ValidationException> validateLanguages(FsBundle bundle, List<String> languages) {
+        Path transDir = bundle.getPath().resolve(FsConstants.TRANSLATIONS_DIR);
+
+        List<String> languagesMetadata = languages
+                .stream()
+                .sorted()
+                .collect(Collectors.toList());
+
+        try (Stream<Path> paths = Files.walk(transDir)) {
+            List<String> languagesFs = paths
+                    .filter(path -> Files.isRegularFile(path))
+                    .map(path -> path.getFileName().toString().replace(".json", ""))
+                    .sorted()
+                    .collect(Collectors.toList());
+
+            if (!languagesMetadata.equals(languagesFs)) {
+                return validationIssue(bundle,
+                        String.format("Values mismatch: field `i18nLanguages`, filesystem `%s` != metadata `%s`",
+                                languagesFs, languagesMetadata));
+            }
+        } catch (IOException e) {
+            if (!languagesMetadata.isEmpty()) {
+                return validationIssue(bundle,
+                        String.format("Listing of directory failed: `%s`, expected `%s`", transDir, languages));
+            }
+        }
+
+        return Optional.empty();
     }
 
     private Optional<ValidationException> validationIssue(FsBundle bundle, String message) {
