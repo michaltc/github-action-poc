@@ -47,8 +47,8 @@ public class BundlesProcessor {
 
     public boolean processAllBundles() {
         List<Bundle> allBundles = finder
-                .findDipBundles()
-                .map(loader::loadDipBundle)
+                .findBundles()
+                .map(loader::loadBundle)
                 .collect(Collectors.toList());
 
         List<ValidationException> issues = allBundles.stream()

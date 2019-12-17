@@ -25,7 +25,7 @@ public class Bundle {
     }
 
     public MetadataIn getMetadata() {
-        return metadata.orElseThrow(() -> new IllegalStateException("No metadata"));
+        return metadata.orElseThrow(() -> new IllegalStateException("No metadata, validations should prevent this"));
     }
 
     public List<ValidationException> getIssues() {

@@ -3,6 +3,7 @@ package com.citrix.microapps.bundlegen.bundles;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,13 +15,13 @@ class FsBundleTest {
     @Test
     void getters() {
         Path path = Paths.get("test", "dip", "vendor", "id", "version");
-        FsBundle bundle = new FsBundle(path);
+        FsBundle bundle = new FsDipBundle(path);
 
         assertAll(
                 () -> assertSame(path, bundle.getPath()),
                 () -> assertEquals("vendor", bundle.getVendor()),
                 () -> assertEquals("id", bundle.getId()),
-                () -> assertEquals("version", bundle.getVersion()),
+                () -> assertEquals(Optional.of("version"), bundle.getVersion()),
                 () -> assertEquals("vendor_id_version", bundle.getArchiveName()),
                 () -> assertEquals(Paths.get("somewhere/archives/vendor/vendor_id_version.zip"),
                         bundle.getArchivePath(Paths.get("somewhere", "archives"))),

@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.DIP_DIR;
+import static com.citrix.microapps.bundlegen.bundles.FsConstants.HTTP_DIR;
 
 /**
  * Find all bundles in a directory tree with the standard structure.
@@ -18,21 +19,37 @@ import static com.citrix.microapps.bundlegen.bundles.FsConstants.DIP_DIR;
 public class BundlesFinder {
     private static final Logger logger = LoggerFactory.getLogger(BundlesFinder.class);
 
-    private final Path dipsDir;
+    private final Path dipRoot;
+    private final Path httpRoot;
 
     public BundlesFinder(Path bundlesDir) {
-        this.dipsDir = bundlesDir.resolve(DIP_DIR);
+        this.dipRoot = bundlesDir.resolve(DIP_DIR);
+        this.httpRoot = bundlesDir.resolve(HTTP_DIR);
+    }
+
+    public Stream<FsBundle> findBundles() {
+        return Stream.concat(findDipBundles(), findHttpBundles());
     }
 
     /**
-     * DIP bundles use 3 levels of directories: vendor - bundle - version.
+     * DIP bundles use 3 levels of directories: vendor - bundle ID - version.
      */
-    public Stream<FsBundle> findDipBundles() {
-        logger.info("Searching for all DIP bundles: {}", dipsDir);
-        return listDirectSubdirectories(dipsDir)          // vendor
+    private Stream<FsBundle> findDipBundles() {
+        logger.info("Searching for all DIP bundles: {}", dipRoot);
+        return listDirectSubdirectories(dipRoot)          // vendor
                 .flatMap(this::listDirectSubdirectories)  // bundle ID
                 .flatMap(this::listDirectSubdirectories)  // version
-                .map(FsBundle::new);
+                .map(FsDipBundle::new);
+    }
+
+    /**
+     * HTTP bundles use 2 levels of directories: vendor - bundle ID.
+     */
+    private Stream<FsBundle> findHttpBundles() {
+        logger.info("Searching for all HTTP bundles: {}", httpRoot);
+        return listDirectSubdirectories(httpRoot)          // vendor
+                .flatMap(this::listDirectSubdirectories)   // bundle ID
+                .map(FsHttpBundle::new);
     }
 
     /**

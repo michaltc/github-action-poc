@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class BundlesFinderTest {
     private List<FsBundle> findDipBundles(Path path) {
         return new BundlesFinder(path)
-                .findDipBundles()
+                .findBundles()
                 .sorted(Comparator.comparing(FsBundle::getPath))
                 .collect(Collectors.toList());
     }
@@ -26,10 +26,10 @@ class BundlesFinderTest {
         List<FsBundle> actual = findDipBundles(path("src/test/resources/bundles"));
 
         List<FsBundle> expected = Arrays.asList(
-                new FsBundle(path("src/test/resources/bundles/dip/vendor1/bundle1/0.0.1")),
-                new FsBundle(path("src/test/resources/bundles/dip/vendor1/bundle2/0.0.1")),
-                new FsBundle(path("src/test/resources/bundles/dip/vendor2/bundle1/0.0.1")),
-                new FsBundle(path("src/test/resources/bundles/dip/vendor2/bundle2/0.0.1"))
+                new FsDipBundle(path("src/test/resources/bundles/dip/vendor1/bundle1/0.0.1")),
+                new FsDipBundle(path("src/test/resources/bundles/dip/vendor1/bundle2/0.0.1")),
+                new FsDipBundle(path("src/test/resources/bundles/dip/vendor2/bundle1/0.0.1")),
+                new FsDipBundle(path("src/test/resources/bundles/dip/vendor2/bundle2/0.0.1"))
         );
 
         assertEquals(expected, actual);

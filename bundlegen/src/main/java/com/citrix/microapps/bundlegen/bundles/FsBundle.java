@@ -2,75 +2,40 @@ package com.citrix.microapps.bundlegen.bundles;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.ARCHIVE_EXTENSION;
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.METADATA_FILE;
 
 /**
- * One DIP bundle located in filesystem.
+ * Generic bundle located in filesystem.
  * <p>
  * The structure of directories is `.../vendor/id/version/...`.
  */
-public class FsBundle {
-    private final Path path;
+public interface FsBundle {
+    Path getPath();
 
-    public FsBundle(Path path) {
-        this.path = path;
-    }
+    String getVendor();
 
-    public Path getPath() {
-        return path;
-    }
+    String getId();
 
-    public String getVendor() {
-        return path.getParent().getParent().getFileName().toString();
-    }
+    Optional<String> getVersion();
 
-    public String getId() {
-        return path.getParent().getFileName().toString();
-    }
+    String getArchiveName();
 
-    public String getVersion() {
-        return path.getFileName().toString();
-    }
-
-    public String getArchiveName() {
-        return getVendor() + "_" + getId() + "_" + getVersion();
-    }
-
-    public Path getArchivePath(Path archivesDir) {
+    default Path getArchivePath(Path archivesDir) {
         return archivesDir
                 .resolve(getVendor())
                 .resolve(getArchiveName() + ARCHIVE_EXTENSION);
     }
 
-    public URI getDownloadUrl(URI bundlesRepository) {
+    default URI getDownloadUrl(URI bundlesRepository) {
         String repo = bundlesRepository.toString();
         String repoSlash = repo.endsWith("/") ? repo : repo + "/";
         return URI.create(repoSlash + getVendor() + "/" + getArchiveName() + ARCHIVE_EXTENSION);
     }
 
-    public Path getMetadataPath() {
-        return path.resolve(METADATA_FILE);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        FsBundle fsBundle = (FsBundle) o;
-
-        return path.equals(fsBundle.path);
-    }
-
-    @Override
-    public int hashCode() {
-        return path.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return path.toString();
+    default Path getMetadataPath() {
+        return getPath().resolve(METADATA_FILE);
     }
 }

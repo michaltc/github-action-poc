@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ArchiveBuilderTest {
     private static final FsBundle TEST_BUNDLE =
-            new FsBundle(path("src/test/resources/bundles/dip/vendor1/bundle1/0.0.1"));
+            new FsDipBundle(path("src/test/resources/bundles/dip/vendor1/bundle1/0.0.1"));
 
     private List<String> listEntriesInZip(byte[] content) throws IOException {
         List<String> result = new ArrayList<>();
@@ -68,7 +68,7 @@ class ArchiveBuilderTest {
 
     @Test
     void directoryDoesNotExist(@TempDir Path tempDir) {
-        FsBundle bundle = new FsBundle(path("this/path/does/not/exist"));
+        FsBundle bundle = new FsDipBundle(path("this/path/does/not/exist"));
 
         assertThatThrownBy(() -> new BundlesArchiver(tempDir).buildArchive(bundle))
                 .isInstanceOf(UncheckedIOException.class)
