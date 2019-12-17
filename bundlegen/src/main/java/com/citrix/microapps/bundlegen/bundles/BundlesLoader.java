@@ -1,17 +1,14 @@
 package com.citrix.microapps.bundlegen.bundles;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,13 +47,8 @@ public class BundlesLoader {
         logger.info("Loading bundle: {}", bundle);
         List<ValidationException> issues = new ArrayList<>();
 
-        try {
-            Set<Path> bundleFiles = listFiles(bundle.getPath());
-            issues.addAll(checkMandatoryFiles(bundle, bundleFiles));
-            issues.addAll(checkUnknownFiles(bundle, bundleFiles));
-        } catch (IOException e) {
-            issues.add(new ValidationException(bundle, "Listing of bundle files failed: " + bundle.getPath(), e));
-        }
+        issues.addAll(checkMandatoryFiles(bundle, bundle.getFiles()));
+        issues.addAll(checkUnknownFiles(bundle, bundle.getFiles()));
 
         Optional<Metadata> metadata = loadAndValidateMetadata(issues, bundle);
         return new Bundle(bundle, metadata, issues);
@@ -90,16 +82,7 @@ public class BundlesLoader {
         }
     }
 
-    private Set<Path> listFiles(Path directory) throws IOException {
-        try (Stream<Path> paths = Files.walk(directory)) {
-            return paths
-                    .filter(path -> Files.isRegularFile(path))
-                    .map(directory::relativize)
-                    .collect(Collectors.toSet());
-        }
-    }
-
-    private List<ValidationException> checkMandatoryFiles(FsBundle bundle, Set<Path> bundleFiles) {
+    private List<ValidationException> checkMandatoryFiles(FsBundle bundle, List<Path> bundleFiles) {
         return FsConstants.BUNDLE_MANDATORY_FILES
                 .stream()
                 .filter(path -> !bundleFiles.contains(path))
@@ -107,7 +90,7 @@ public class BundlesLoader {
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationException> checkUnknownFiles(FsBundle bundle, Set<Path> bundleFiles) {
+    private List<ValidationException> checkUnknownFiles(FsBundle bundle, List<Path> bundleFiles) {
         HashSet<Path> copy = new HashSet<>(bundleFiles);
         copy.removeAll(FsConstants.BUNDLE_ALLOWED_FILES);
 
@@ -196,23 +179,17 @@ public class BundlesLoader {
                 .sorted()
                 .collect(Collectors.toList());
 
-        try (Stream<Path> paths = Files.walk(transDir)) {
-            List<String> languagesFs = paths
-                    .filter(path -> Files.isRegularFile(path))
-                    .map(path -> path.getFileName().toString().replace(".json", ""))
-                    .sorted()
-                    .collect(Collectors.toList());
+        List<String> languagesFs = bundle.getFiles()
+                .stream()
+                .filter(path -> path.startsWith(FsConstants.TRANSLATIONS_DIR))
+                .map(transDir::relativize)
+                .map(path -> path.getFileName().toString().replace(".json", ""))
+                .collect(Collectors.toList());
 
-            if (!languagesMetadata.equals(languagesFs)) {
-                return validationIssue(bundle,
-                        String.format("Values mismatch: field `i18nLanguages`, filesystem `%s` != metadata `%s`",
-                                languagesFs, languagesMetadata));
-            }
-        } catch (IOException e) {
-            if (!languagesMetadata.isEmpty()) {
-                return validationIssue(bundle,
-                        String.format("Listing of directory failed: `%s`, expected `%s`", transDir, languages));
-            }
+        if (!languagesMetadata.equals(languagesFs)) {
+            return validationIssue(bundle,
+                    String.format("Values mismatch: field `i18nLanguages`, filesystem `%s` != metadata `%s`",
+                            languagesFs, languagesMetadata));
         }
 
         return Optional.empty();

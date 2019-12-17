@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,7 +40,7 @@ public class BundlesFinder {
         return listDirectSubdirectories(dipRoot)          // vendor
                 .flatMap(this::listDirectSubdirectories)  // bundle ID
                 .flatMap(this::listDirectSubdirectories)  // version
-                .map(FsDipBundle::new);
+                .map(path -> new FsDipBundle(path, listFiles(path)));
     }
 
     /**
@@ -49,7 +50,7 @@ public class BundlesFinder {
         logger.info("Searching for all HTTP bundles: {}", httpRoot);
         return listDirectSubdirectories(httpRoot)          // vendor
                 .flatMap(this::listDirectSubdirectories)   // bundle ID
-                .map(FsHttpBundle::new);
+                .map(path -> new FsHttpBundle(path, listFiles(path)));
     }
 
     /**
@@ -78,6 +79,24 @@ public class BundlesFinder {
             return true;
         } else {
             throw new RuntimeException("Path is not a directory: " + path);
+        }
+    }
+
+    /**
+     * List all files in a directory.
+     *
+     * @param directory directory to search in
+     * @return sorted relative paths to the files
+     */
+    private List<Path> listFiles(Path directory) {
+        try (Stream<Path> paths = Files.walk(directory)) {
+            return paths
+                    .filter(path -> Files.isRegularFile(path))
+                    .map(directory::relativize)
+                    .sorted()
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new UncheckedIOException("Listing of directory failed: " + directory, e);
         }
     }
 }

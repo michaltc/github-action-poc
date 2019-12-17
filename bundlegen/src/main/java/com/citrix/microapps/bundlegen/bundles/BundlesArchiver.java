@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.stream.Stream;
 import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -43,16 +42,16 @@ public class BundlesArchiver {
 
             String archiveName = bundle.getArchiveName();
 
-            try (Stream<Path> paths = Files.walk(bundle.getPath())) {
-                // Empty directories are intentionally ignored while traversing, they will be missing in the archive.
-                // Git can't store them and the archives would be only a little bigger with no benefit. If you decide
-                // to have also directory entries in zip, directory entry is defined to be one whose name ends with a
-                // '/' and have no content.
-                paths.filter(Files::isRegularFile)
-                        // Make sure the files are always iterated and added to zip in the same order.
-                        .sorted()
-                        .forEach(file -> addToArchive(zipStream, archiveName, bundle.getPath(), file));
-            }
+            // Empty directories are intentionally ignored while traversing, they will be missing in the archive.
+            // Git can't store them and the archives would be only a little bigger with no benefit. If you decide
+            // to have also directory entries in zip, directory entry is defined to be one whose name ends with a
+            // '/' and have no content.
+            //
+            // Make sure the files are always iterated and added to zip in the same order.
+            bundle.getFiles()
+                    .stream()
+                    .map(path -> bundle.getPath().resolve(path))
+                    .forEach(file -> addToArchive(zipStream, archiveName, bundle.getPath(), file));
 
             zipStream.finish();
             return bytes.toByteArray();
