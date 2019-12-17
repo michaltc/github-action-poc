@@ -64,7 +64,6 @@ public class BundlesLoader {
 
     private Optional<Metadata> loadAndValidateMetadata(List<ValidationException> issues, FsBundle bundle) {
         Path metadataPath = bundle.getMetadataPath();
-        logger.info("Loading bundle metadata: {}", metadataPath);
 
         try {
             switch (bundle.getType()) {
