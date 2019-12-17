@@ -12,6 +12,7 @@ import java.util.Set;
  */
 public class FsConstants {
     public static final String DIP_DIR = "dip";
+    public static final String HTTP_DIR = "http";
     public static final String METADATA_FILE = "metadata.json";
     public static final String TRANSLATIONS_DIR = "i18n";
 

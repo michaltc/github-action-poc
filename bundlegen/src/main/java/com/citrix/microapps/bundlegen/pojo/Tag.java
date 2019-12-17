@@ -3,12 +3,12 @@ package com.citrix.microapps.bundlegen.pojo;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Metadata {
+public class Tag {
     private final String tag;
     private final String value;
 
     @JsonCreator
-    public Metadata(
+    public Tag(
             @JsonProperty(value = "tag", required = true) String tag,
             @JsonProperty(value = "value", required = true) String value
     ) {

@@ -31,7 +31,7 @@ public class BundlesLoader {
             .with(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES)
             .forType(MetadataIn.class);
 
-    public Bundle loadDipBundle(FsBundle bundle) {
+    public Bundle loadBundle(FsBundle bundle) {
         logger.info("Loading bundle: {}", bundle);
         List<ValidationException> issues = new ArrayList<>();
 

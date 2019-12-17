@@ -41,7 +41,7 @@ public class MetadataIn {
     private final List<String> i18nLanguages;
     private final List<App> apps;
     private final List<VaResolver> vaResolvers;
-    private final List<Metadata> metadata;
+    private final List<Tag> tags;
 
     @JsonCreator
     public MetadataIn(
@@ -59,7 +59,7 @@ public class MetadataIn {
             @JsonProperty(value = "i18nLanguages", required = true) List<String> i18nLanguages,
             @JsonProperty(value = "apps", required = true) List<App> apps,
             @JsonProperty(value = "vaResolvers", required = true) List<VaResolver> vaResolvers,
-            @JsonProperty(value = "metadata", required = true) List<Metadata> metadata
+            @JsonProperty(value = "tags", required = true) List<Tag> tags
     ) {
         this.type = type;
         this.id = id;
@@ -75,7 +75,7 @@ public class MetadataIn {
         this.i18nLanguages = i18nLanguages;
         this.apps = apps;
         this.vaResolvers = vaResolvers;
-        this.metadata = metadata;
+        this.tags = tags;
     }
 
     public List<ValidationException> validate(FsBundle bundle) {
@@ -186,7 +186,7 @@ public class MetadataIn {
         return vaResolvers;
     }
 
-    public List<Metadata> getMetadata() {
-        return metadata;
+    public List<Tag> getTags() {
+        return tags;
     }
 }
