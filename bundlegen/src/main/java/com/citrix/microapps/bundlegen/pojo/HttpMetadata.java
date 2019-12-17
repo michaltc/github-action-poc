@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Metadata for HTTP integrations.
+ * Metadata loaded from `metadata.json` for HTTP integrations.
  */
-public class HttpMetadata implements MetadataIn {
+public class HttpMetadata implements Metadata {
     private final Type type;
     private final String vendor;
     private final UUID id;

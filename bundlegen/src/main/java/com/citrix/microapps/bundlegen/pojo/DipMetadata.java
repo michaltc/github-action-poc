@@ -7,9 +7,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Metadata for DIP integrations.
+ * Metadata loaded from `metadata.json` for DIP integrations.
  */
-public class DipMetadata implements MetadataIn {
+public class DipMetadata implements Metadata {
     private final Type type;
     private final String vendor;
     private final String id;

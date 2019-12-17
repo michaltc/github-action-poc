@@ -6,13 +6,13 @@ import java.util.List;
  * Data to be written to `bundles.json`.
  */
 public class Bundles {
-    private final List<MetadataOut> bundles;
+    private final List<OutMetadata> bundles;
 
-    public Bundles(List<MetadataOut> bundles) {
+    public Bundles(List<OutMetadata> bundles) {
         this.bundles = bundles;
     }
 
-    public List<MetadataOut> getBundles() {
+    public List<OutMetadata> getBundles() {
         return bundles;
     }
 }

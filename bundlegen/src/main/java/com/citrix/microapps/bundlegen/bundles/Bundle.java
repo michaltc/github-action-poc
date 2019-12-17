@@ -3,7 +3,7 @@ package com.citrix.microapps.bundlegen.bundles;
 import java.util.List;
 import java.util.Optional;
 
-import com.citrix.microapps.bundlegen.pojo.MetadataIn;
+import com.citrix.microapps.bundlegen.pojo.Metadata;
 
 /**
  * Bundle with all information from filesystem and metadata file.
@@ -11,10 +11,10 @@ import com.citrix.microapps.bundlegen.pojo.MetadataIn;
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class Bundle {
     private final FsBundle fs;
-    private final Optional<MetadataIn> metadata;
+    private final Optional<Metadata> metadata;
     private final List<ValidationException> issues;
 
-    public Bundle(FsBundle fs, Optional<MetadataIn> metadata, List<ValidationException> issues) {
+    public Bundle(FsBundle fs, Optional<Metadata> metadata, List<ValidationException> issues) {
         this.fs = fs;
         this.metadata = metadata;
         this.issues = issues;
@@ -24,7 +24,7 @@ public class Bundle {
         return fs;
     }
 
-    public MetadataIn getMetadata() {
+    public Metadata getMetadata() {
         return metadata.orElseThrow(() -> new IllegalStateException("No metadata, validations should prevent this"));
     }
 
