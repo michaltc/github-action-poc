@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.citrix.microapps.bundlegen.pojo.Bundles;
-import com.citrix.microapps.bundlegen.pojo.MetadataOut;
+import com.citrix.microapps.bundlegen.pojo.OutMetadata;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
@@ -63,7 +63,7 @@ public class BundlesProcessor {
 
         logger.info("Bundles validation successful, no issue detected");
 
-        List<MetadataOut> archivedBundles = allBundles.stream()
+        List<OutMetadata> archivedBundles = allBundles.stream()
                 .map(this::processOneBundle)
                 .collect(Collectors.toList());
 
@@ -84,7 +84,7 @@ public class BundlesProcessor {
         }
     }
 
-    public MetadataOut processOneBundle(Bundle bundle) {
+    public OutMetadata processOneBundle(Bundle bundle) {
         logger.info("Building bundle archive: {}", bundle);
         byte[] content = archiver.buildArchive(bundle.getFs());
         Path archivePath = archiver.storeArchive(bundle.getFs(), content);
@@ -92,10 +92,10 @@ public class BundlesProcessor {
         URI downloadUrl = bundle.getFs().getDownloadUrl(bundlesRepository);
         logger.info("Bundle archive created: {}, {} B, md5 {}", archivePath, content.length, md5Hex);
 
-        return new MetadataOut(bundle.getMetadata(), downloadUrl, md5Hex);
+        return new OutMetadata(bundle.getMetadata(), downloadUrl, md5Hex);
     }
 
-    public void writeBundlesJson(List<MetadataOut> allBundles, Path bundlesJson) {
+    public void writeBundlesJson(List<OutMetadata> allBundles, Path bundlesJson) {
         try {
             logger.info("Storing output metadata: {} bundles, {}", allBundles.size(), bundlesJson);
             Bundles bundles = new Bundles(allBundles);

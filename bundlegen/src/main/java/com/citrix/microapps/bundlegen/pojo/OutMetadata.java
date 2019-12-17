@@ -7,22 +7,22 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
 /**
  * Metadata of one bundle written to `bundles.json`.
  */
-public class MetadataOut {
-    private final MetadataIn metadataIn;
+public class OutMetadata {
+    private final Metadata metadata;
     private final URI downloadUrl;
     private final String md5Checksum;
 
-    public MetadataOut(MetadataIn metadataIn,
+    public OutMetadata(Metadata metadata,
                        URI downloadUrl,
                        String md5Checksum) {
-        this.metadataIn = metadataIn;
+        this.metadata = metadata;
         this.downloadUrl = downloadUrl;
         this.md5Checksum = md5Checksum;
     }
 
     @JsonUnwrapped
-    public MetadataIn getMetadataIn() {
-        return metadataIn;
+    public Metadata getMetadata() {
+        return metadata;
     }
 
     public URI getDownloadUrl() {

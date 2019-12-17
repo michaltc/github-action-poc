@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import com.citrix.microapps.bundlegen.pojo.DipMetadata;
 import com.citrix.microapps.bundlegen.pojo.HttpMetadata;
-import com.citrix.microapps.bundlegen.pojo.MetadataIn;
+import com.citrix.microapps.bundlegen.pojo.Metadata;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -58,11 +58,11 @@ public class BundlesLoader {
             issues.add(new ValidationException(bundle, "Listing of bundle files failed: " + bundle.getPath(), e));
         }
 
-        Optional<MetadataIn> metadata = loadAndValidateMetadata(issues, bundle);
+        Optional<Metadata> metadata = loadAndValidateMetadata(issues, bundle);
         return new Bundle(bundle, metadata, issues);
     }
 
-    private Optional<MetadataIn> loadAndValidateMetadata(List<ValidationException> issues, FsBundle bundle) {
+    private Optional<Metadata> loadAndValidateMetadata(List<ValidationException> issues, FsBundle bundle) {
         Path metadataPath = bundle.getMetadataPath();
         logger.info("Loading bundle metadata: {}", metadataPath);
 
