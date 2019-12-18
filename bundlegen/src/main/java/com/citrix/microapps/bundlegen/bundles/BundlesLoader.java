@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.citrix.microapps.bundlegen.pojo.DipMetadata;
 import com.citrix.microapps.bundlegen.pojo.HttpMetadata;
 import com.citrix.microapps.bundlegen.pojo.Metadata;
+import com.citrix.microapps.bundlegen.pojo.Type;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -101,7 +102,7 @@ public class BundlesLoader {
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationException> validateCommonMetadata(FsBundle bundle, Metadata metadata) {
+    private static List<ValidationException> validateCommonMetadata(FsBundle bundle, Metadata metadata) {
         List<ValidationException> issues = new ArrayList<>();
 
         validateFormat(DATE_PATTERN, "created", metadata.getCreated()).ifPresent(issues::add);
@@ -117,8 +118,14 @@ public class BundlesLoader {
         return issues;
     }
 
-    private List<ValidationException> validateDipMetadata(FsBundle bundle, DipMetadata metadata) {
+    static List<ValidationException> validateDipMetadata(FsBundle bundle, DipMetadata metadata) {
         List<ValidationException> issues = validateCommonMetadata(bundle, metadata);
+
+        if (metadata.getType() != Type.DIP) {
+            issues.add(new ValidationException(
+                    String.format("Invalid value: field `type`, value `%s`, expecting `%s`",
+                            metadata.getType(), Type.DIP)));
+        }
 
         validateFormat(ID_PATTERN, "id", metadata.getId()).ifPresent(issues::add);
         validateFormat(VERSION_PATTERN, "version", metadata.getVersion()).ifPresent(issues::add);
@@ -131,8 +138,14 @@ public class BundlesLoader {
         return issues;
     }
 
-    private List<ValidationException> validateHttpMetadata(FsBundle bundle, HttpMetadata metadata) {
+    static List<ValidationException> validateHttpMetadata(FsBundle bundle, HttpMetadata metadata) {
         List<ValidationException> issues = validateCommonMetadata(bundle, metadata);
+
+        if (metadata.getType() != Type.HTTP) {
+            issues.add(new ValidationException(
+                    String.format("Invalid value: field `type`, value `%s`, expecting `%s`",
+                            metadata.getType(), Type.HTTP)));
+        }
 
         validateSync(bundle::getId, "id", metadata.getId().toString()).ifPresent(issues::add);
 
@@ -142,7 +155,7 @@ public class BundlesLoader {
     /**
      * Validate that a value matches its expected format.
      */
-    private Optional<ValidationException> validateFormat(Pattern pattern, String field, String value) {
+    static Optional<ValidationException> validateFormat(Pattern pattern, String field, String value) {
         if (pattern.matcher(value).matches()) {
             return Optional.empty();
         }
@@ -154,7 +167,7 @@ public class BundlesLoader {
     /**
      * Validate that value in metadata file matches name of directory in filesystem tree.
      */
-    private <T> Optional<ValidationException> validateSync(Supplier<T> valueSupplier, String field, T value) {
+    static <T> Optional<ValidationException> validateSync(Supplier<T> valueSupplier, String field, T value) {
         T fsValue = valueSupplier.get();
         if (fsValue.equals(value)) {
             return Optional.empty();
