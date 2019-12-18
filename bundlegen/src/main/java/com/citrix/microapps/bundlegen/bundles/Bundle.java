@@ -1,7 +1,9 @@
 package com.citrix.microapps.bundlegen.bundles;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.citrix.microapps.bundlegen.pojo.Metadata;
 
@@ -28,8 +30,14 @@ public class Bundle {
         return metadata.orElseThrow(() -> new IllegalStateException("No metadata, validations should prevent this"));
     }
 
-    public List<ValidationException> getIssues() {
-        return issues;
+    public List<BundleIssue> getIssues() {
+        if (issues.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return issues.stream()
+                    .map(e -> new BundleIssue(fs, e))
+                    .collect(Collectors.toList());
+        }
     }
 
     @Override

@@ -47,8 +47,8 @@ public class BundlesLoader {
         logger.info("Loading bundle: {}", bundle);
         List<ValidationException> issues = new ArrayList<>();
 
-        issues.addAll(checkMandatoryFiles(bundle, bundle.getFiles()));
-        issues.addAll(checkUnknownFiles(bundle, bundle.getFiles()));
+        issues.addAll(checkMandatoryFiles(bundle.getFiles()));
+        issues.addAll(checkUnknownFiles(bundle.getFiles()));
 
         Optional<Metadata> metadata = loadAndValidateMetadata(issues, bundle);
         return new Bundle(bundle, metadata, issues);
@@ -77,36 +77,36 @@ public class BundlesLoader {
                     throw new UnsupportedOperationException("Unexpected bundle type: " + bundle.getType());
             }
         } catch (IOException e) {
-            issues.add(new ValidationException(bundle, "Loading of bundle metadata failed: " + metadataPath, e));
+            issues.add(new ValidationException("Loading of bundle metadata failed: " + metadataPath, e));
             return Optional.empty();
         }
     }
 
-    private List<ValidationException> checkMandatoryFiles(FsBundle bundle, List<Path> bundleFiles) {
+    private List<ValidationException> checkMandatoryFiles(List<Path> bundleFiles) {
         return FsConstants.BUNDLE_MANDATORY_FILES
                 .stream()
                 .filter(path -> !bundleFiles.contains(path))
-                .map(path -> new ValidationException(bundle, "Mandatory file is missing: " + path))
+                .map(path -> new ValidationException("Mandatory file is missing: " + path))
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationException> checkUnknownFiles(FsBundle bundle, List<Path> bundleFiles) {
+    private List<ValidationException> checkUnknownFiles(List<Path> bundleFiles) {
         HashSet<Path> copy = new HashSet<>(bundleFiles);
         copy.removeAll(FsConstants.BUNDLE_ALLOWED_FILES);
 
         return copy.stream()
-                .map(path -> new ValidationException(bundle, "Bundle contains an unexpected file: " + path))
+                .map(path -> new ValidationException("Bundle contains an unexpected file: " + path))
                 .collect(Collectors.toList());
     }
 
     private List<ValidationException> validateCommonMetadata(FsBundle bundle, Metadata metadata) {
         List<ValidationException> issues = new ArrayList<>();
 
-        validateFormat(bundle, DATE_PATTERN, "created", metadata.getCreated()).ifPresent(issues::add);
-        validateFormat(bundle, VERSION_PATTERN, "masVersion", metadata.getMasVersion()).ifPresent(issues::add);
+        validateFormat(DATE_PATTERN, "created", metadata.getCreated()).ifPresent(issues::add);
+        validateFormat(VERSION_PATTERN, "masVersion", metadata.getMasVersion()).ifPresent(issues::add);
 
-        validateSync(bundle, bundle::getType, "type", metadata.getType()).ifPresent(issues::add);
-        validateSync(bundle, bundle::getVendor, "vendor", metadata.getVendor()).ifPresent(issues::add);
+        validateSync(bundle::getType, "type", metadata.getType()).ifPresent(issues::add);
+        validateSync(bundle::getVendor, "vendor", metadata.getVendor()).ifPresent(issues::add);
 
         validateLanguages(bundle, metadata.getI18nLanguages()).ifPresent(issues::add);
 
@@ -118,12 +118,12 @@ public class BundlesLoader {
     private List<ValidationException> validateDipMetadata(FsBundle bundle, DipMetadata metadata) {
         List<ValidationException> issues = validateCommonMetadata(bundle, metadata);
 
-        validateFormat(bundle, ID_PATTERN, "id", metadata.getId()).ifPresent(issues::add);
-        validateFormat(bundle, VERSION_PATTERN, "version", metadata.getVersion()).ifPresent(issues::add);
+        validateFormat(ID_PATTERN, "id", metadata.getId()).ifPresent(issues::add);
+        validateFormat(VERSION_PATTERN, "version", metadata.getVersion()).ifPresent(issues::add);
 
-        validateSync(bundle, bundle::getId, "id", metadata.getId()).ifPresent(issues::add);
+        validateSync(bundle::getId, "id", metadata.getId()).ifPresent(issues::add);
         bundle.getVersion()
-                .flatMap(version -> validateSync(bundle, () -> version, "version", metadata.getVersion()))
+                .flatMap(version -> validateSync(() -> version, "version", metadata.getVersion()))
                 .ifPresent(issues::add);
 
         return issues;
@@ -132,7 +132,7 @@ public class BundlesLoader {
     private List<ValidationException> validateHttpMetadata(FsBundle bundle, HttpMetadata metadata) {
         List<ValidationException> issues = validateCommonMetadata(bundle, metadata);
 
-        validateSync(bundle, bundle::getId, "id", metadata.getId().toString()).ifPresent(issues::add);
+        validateSync(bundle::getId, "id", metadata.getId().toString()).ifPresent(issues::add);
 
         return issues;
     }
@@ -140,31 +140,25 @@ public class BundlesLoader {
     /**
      * Validate that a value matches its expected format.
      */
-    private Optional<ValidationException> validateFormat(FsBundle bundle,
-                                                         Pattern pattern,
-                                                         String field,
-                                                         String value) {
+    private Optional<ValidationException> validateFormat(Pattern pattern, String field, String value) {
         if (pattern.matcher(value).matches()) {
             return Optional.empty();
         }
 
-        return validationIssue(bundle,
+        return validationIssue(
                 String.format("Invalid value: field `%s`, value `%s`, pattern `%s`", field, value, pattern));
     }
 
     /**
      * Validate that value in metadata file matches name of directory in filesystem tree.
      */
-    private <T> Optional<ValidationException> validateSync(FsBundle bundle,
-                                                           Supplier<T> valueSupplier,
-                                                           String field,
-                                                           T value) {
+    private <T> Optional<ValidationException> validateSync(Supplier<T> valueSupplier, String field, T value) {
         T fsValue = valueSupplier.get();
         if (fsValue.equals(value)) {
             return Optional.empty();
         }
 
-        return validationIssue(bundle,
+        return validationIssue(
                 String.format("Values mismatch: field `%s`, filesystem `%s` != metadata `%s`", field, fsValue, value));
     }
 
@@ -184,7 +178,7 @@ public class BundlesLoader {
                 .collect(Collectors.toList());
 
         if (!languagesMetadata.equals(languagesFs)) {
-            return validationIssue(bundle,
+            return validationIssue(
                     String.format("Values mismatch: field `i18nLanguages`, filesystem `%s` != metadata `%s`",
                             languagesFs, languagesMetadata));
         }
@@ -192,7 +186,7 @@ public class BundlesLoader {
         return Optional.empty();
     }
 
-    private Optional<ValidationException> validationIssue(FsBundle bundle, String message) {
-        return Optional.of(new ValidationException(bundle, message));
+    private Optional<ValidationException> validationIssue(String message) {
+        return Optional.of(new ValidationException(message));
     }
 }

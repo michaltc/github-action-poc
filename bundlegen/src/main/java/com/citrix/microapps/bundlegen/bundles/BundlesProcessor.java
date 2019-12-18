@@ -51,7 +51,7 @@ public class BundlesProcessor {
                 .map(loader::loadBundle)
                 .collect(Collectors.toList());
 
-        List<ValidationException> issues = allBundles.stream()
+        List<BundleIssue> issues = allBundles.stream()
                 .flatMap(bundle -> bundle.getIssues().stream())
                 .collect(Collectors.toList());
 
@@ -74,10 +74,10 @@ public class BundlesProcessor {
     /**
      * The validations are collected in {@link BundlesLoader}, this is only reporting.
      */
-    private void reportIssue(ValidationException issue) {
-        logger.error("\tBundle: {}", issue.getMessage());
+    private void reportIssue(BundleIssue issue) {
+        logger.error("\tBundle {}: {}", issue.getBundle(), issue.getDetails().getMessage());
 
-        Throwable cause = issue.getCause();
+        Throwable cause = issue.getDetails().getCause();
         while (cause != null) {
             logger.error("\t\tCause: {}", cause.toString()); // No stack trace for now
             cause = cause.getCause();
