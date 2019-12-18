@@ -1,6 +1,6 @@
 {
-  "type": "DIP",
-  "vendor": "Citrix",
+  "type": "HTTP",
+  "vendor": "Citrix Inc.",
   "id": "com.sapho.services.salesforce.SalesforceService",
   "version": "2.5.0",
   "title": "Salesforce",
@@ -11,9 +11,10 @@
     "INTERNAL_DEVELOPMENT",
     "WEB_SERVICES"
   ],
-  "created": "2019-18-16T00:00:00",
+  "created": "2019-18-16 00:00:00",
   "supportsOAuthForActions": true,
   "i18nLanguages": [
+    "cs",
     "en",
     "de",
     "es",
