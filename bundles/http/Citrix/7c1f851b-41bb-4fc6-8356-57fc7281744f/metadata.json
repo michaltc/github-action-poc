@@ -1,6 +1,6 @@
 {
   "type": "HTTP",
-  "vendor": "Citrix",
+  "vendor": "Citrix Inc.",
   "id": "7c1f851b-41bb-4fc6-8356-57fc7281744f",
   "title": "Salesforce Approval",
   "description": "Salesforce lets you build a mobile app connected to your Salesforce instance.",
@@ -13,8 +13,7 @@
   "created": "2019-12-16T00:00:00",
   "supportsOAuthForActions": false,
   "i18nLanguages": [
-    "en",
-    "de"
+    "en"
   ],
   "apps": [
     {
