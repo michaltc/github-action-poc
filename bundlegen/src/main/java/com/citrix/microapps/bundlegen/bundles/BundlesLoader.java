@@ -48,7 +48,7 @@ public class BundlesLoader {
         List<ValidationException> issues = new ArrayList<>();
 
         issues.addAll(checkMandatoryFiles(bundle.getFiles()));
-        issues.addAll(checkUnknownFiles(bundle.getFiles()));
+        issues.addAll(checkUnexpectedFiles(bundle.getFiles()));
 
         Optional<Metadata> metadata = loadAndValidateMetadata(issues, bundle);
         return new Bundle(bundle, metadata, issues);
@@ -90,7 +90,7 @@ public class BundlesLoader {
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationException> checkUnknownFiles(List<Path> bundleFiles) {
+    private List<ValidationException> checkUnexpectedFiles(List<Path> bundleFiles) {
         HashSet<Path> copy = new HashSet<>(bundleFiles);
         copy.removeAll(FsConstants.BUNDLE_ALLOWED_FILES);
 

@@ -27,7 +27,8 @@ public class Bundle {
     }
 
     public Metadata getMetadata() {
-        return metadata.orElseThrow(() -> new IllegalStateException("No metadata, validations should prevent this"));
+        return metadata
+                .orElseThrow(() -> new UnsupportedOperationException("No metadata, validations should prevent this"));
     }
 
     public List<BundleIssue> getIssues() {

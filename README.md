@@ -92,6 +92,9 @@ skip updating of the destination repository.
 grow as much as possible.** Filesystem entries should be iterated always in the same order, zip archives should differ
 (on byte level) only when a source file changed. No timestamp based on current time should appear in any generated file.
 
+The code is `null`-free, all fields and variable should always contain their values. Data structures are immutable after
+their construction.
+
 
 [workspace]: https://www.citrix.com/products/citrix-workspace/
 [microapps]: https://www.citrix.com/digital-workspace/microapps.html

@@ -64,7 +64,7 @@ public class BundlesProcessor {
         logger.info("Bundles validation successful, no issue detected");
 
         List<OutMetadata> archivedBundles = allBundles.stream()
-                .map(this::processOneBundle)
+                .map(this::archiveOneBundle)
                 .collect(Collectors.toList());
 
         writeBundlesJson(archivedBundles, distDir.resolve(BUNDLES_JSON));
@@ -84,7 +84,7 @@ public class BundlesProcessor {
         }
     }
 
-    public OutMetadata processOneBundle(Bundle bundle) {
+    public OutMetadata archiveOneBundle(Bundle bundle) {
         logger.info("Building bundle archive: {}", bundle);
         byte[] content = archiver.buildArchive(bundle.getFs());
         Path archivePath = archiver.storeArchive(bundle.getFs(), content);
