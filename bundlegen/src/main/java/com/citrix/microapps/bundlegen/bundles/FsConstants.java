@@ -14,6 +14,7 @@ public class FsConstants {
     public static final String DIP_DIR = "dip";
     public static final String HTTP_DIR = "http";
     public static final String METADATA_FILE = "metadata.json";
+    public static final String TEMPLATE_FILE = "template.sapp";
     public static final String TRANSLATIONS_DIR = "i18n";
 
     public static final String ARCHIVES_DIR = "archives";
@@ -25,7 +26,7 @@ public class FsConstants {
      */
     public static final Set<Path> BUNDLE_MANDATORY_FILES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             Paths.get(METADATA_FILE),
-            Paths.get("template.sapp")
+            Paths.get(TEMPLATE_FILE)
     )));
 
     /**
@@ -33,7 +34,7 @@ public class FsConstants {
      */
     public static final Set<Path> BUNDLE_ALLOWED_FILES = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             Paths.get(METADATA_FILE),
-            Paths.get("template.sapp"),
+            Paths.get(TEMPLATE_FILE),
             Paths.get(TRANSLATIONS_DIR, "de.json"),
             Paths.get(TRANSLATIONS_DIR, "en.json"),
             Paths.get(TRANSLATIONS_DIR, "es.json"),
