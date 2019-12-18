@@ -82,20 +82,20 @@ public class BundlesLoader {
         }
     }
 
-    private List<ValidationException> checkMandatoryFiles(List<Path> bundleFiles) {
+    static List<ValidationException> checkMandatoryFiles(List<Path> bundleFiles) {
         return FsConstants.BUNDLE_MANDATORY_FILES
                 .stream()
                 .filter(path -> !bundleFiles.contains(path))
-                .map(path -> new ValidationException("Mandatory file is missing: " + path))
+                .map(path -> new ValidationException("Missing mandatory file: " + path))
                 .collect(Collectors.toList());
     }
 
-    private List<ValidationException> checkUnexpectedFiles(List<Path> bundleFiles) {
+    static List<ValidationException> checkUnexpectedFiles(List<Path> bundleFiles) {
         HashSet<Path> copy = new HashSet<>(bundleFiles);
         copy.removeAll(FsConstants.BUNDLE_ALLOWED_FILES);
 
         return copy.stream()
-                .map(path -> new ValidationException("Bundle contains an unexpected file: " + path))
+                .map(path -> new ValidationException("Unexpected file: " + path))
                 .collect(Collectors.toList());
     }
 
