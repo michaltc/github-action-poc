@@ -16,6 +16,7 @@ public class FsConstants {
     public static final String METADATA_FILE = "metadata.json";
     public static final String TEMPLATE_FILE = "template.sapp";
     public static final String TRANSLATIONS_DIR = "i18n";
+    public static final String TRANSLATION_EXTENSION = ".json";
 
     public static final String ARCHIVES_DIR = "archives";
     public static final String ARCHIVE_EXTENSION = ".zip";
