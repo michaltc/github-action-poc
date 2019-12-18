@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
+import static com.citrix.microapps.bundlegen.bundles.FsConstants.TRANSLATION_EXTENSION;
+
 /**
  * Loader and validator of bundles.
  */
@@ -162,7 +164,7 @@ public class BundlesLoader {
                 String.format("Values mismatch: field `%s`, filesystem `%s` != metadata `%s`", field, fsValue, value));
     }
 
-    private Optional<ValidationException> validateLanguages(FsBundle bundle, List<String> languages) {
+    static Optional<ValidationException> validateLanguages(FsBundle bundle, List<String> languages) {
         Path transDir = bundle.getPath().resolve(FsConstants.TRANSLATIONS_DIR);
 
         List<String> languagesMetadata = languages
@@ -174,7 +176,9 @@ public class BundlesLoader {
                 .stream()
                 .filter(path -> path.startsWith(FsConstants.TRANSLATIONS_DIR))
                 .map(transDir::relativize)
-                .map(path -> path.getFileName().toString().replace(".json", ""))
+                .map(path -> path.getFileName().toString())
+                .filter(fileName -> fileName.endsWith(TRANSLATION_EXTENSION))
+                .map(fileName -> fileName.replace(TRANSLATION_EXTENSION, ""))
                 .collect(Collectors.toList());
 
         if (!languagesMetadata.equals(languagesFs)) {
@@ -186,7 +190,7 @@ public class BundlesLoader {
         return Optional.empty();
     }
 
-    private Optional<ValidationException> validationIssue(String message) {
+    private static Optional<ValidationException> validationIssue(String message) {
         return Optional.of(new ValidationException(message));
     }
 }
