@@ -20,7 +20,6 @@ jobs:
 
       - name: Checkout destination branch
         run: |
-          set -x
           cd "${DEST_REPO_DIR}"
           git checkout "${GITHUB_REF:11}" || git checkout -b "${GITHUB_REF:11}"
 
@@ -37,7 +36,6 @@ jobs:
 
       - name: Execute bundlegen
         run: |
-          set -x
           rm -rf "${DEST_REPO_DIR}/${BUNDLES_DIR}/"
 
           main_class="com.citrix.microapps.bundlegen.BundlegenMain"
@@ -52,11 +50,10 @@ jobs:
 
       - name: Commit and push generated files
         run: |
-          set -x
           cd "${DEST_REPO_DIR}"
           git add .
 
-          if ! git diff --staged --exit-code
+          if ! git diff --staged --exit-code > /dev/null
           then
             "${GITHUB_WORKSPACE}/.github/scripts/git_setup.sh" "${DEST_REPO}" "${{ secrets.DEST_REPO_SSH_KEY }}"
 

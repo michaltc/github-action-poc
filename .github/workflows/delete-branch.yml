@@ -23,8 +23,6 @@ jobs:
       # https://help.github.com/en/actions/automating-your-workflow-with-github-actions/events-that-trigger-workflows#delete-event-delete
       - name: Delete obsolete branches
         run: |
-          set -x
-
           git branch --remotes --format='%(refname:short)' | sed 's%^origin/%%' | sort | tee /tmp/branches_source.txt
           cd "${DEST_REPO_DIR}"
           git branch --remotes --format='%(refname:short)' | sed 's%^origin/%%' | sort | tee /tmp/branches_destination.txt
