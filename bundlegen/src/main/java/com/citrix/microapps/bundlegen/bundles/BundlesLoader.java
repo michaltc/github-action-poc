@@ -99,21 +99,14 @@ public class BundlesLoader {
                 .collect(Collectors.toList());
     }
 
-    @SuppressWarnings("DuplicatedCode")  // Refactoring would make the code much less readable
-    private List<ValidationException> validateDipMetadata(FsBundle bundle, DipMetadata metadata) {
+    private List<ValidationException> validateCommonMetadata(FsBundle bundle, Metadata metadata) {
         List<ValidationException> issues = new ArrayList<>();
 
-        validateFormat(bundle, ID_PATTERN, "id", metadata.getId()).ifPresent(issues::add);
         validateFormat(bundle, DATE_PATTERN, "created", metadata.getCreated()).ifPresent(issues::add);
-        validateFormat(bundle, VERSION_PATTERN, "version", metadata.getVersion()).ifPresent(issues::add);
         validateFormat(bundle, VERSION_PATTERN, "masVersion", metadata.getMasVersion()).ifPresent(issues::add);
 
         validateSync(bundle, bundle::getType, "type", metadata.getType()).ifPresent(issues::add);
         validateSync(bundle, bundle::getVendor, "vendor", metadata.getVendor()).ifPresent(issues::add);
-        validateSync(bundle, bundle::getId, "id", metadata.getId()).ifPresent(issues::add);
-        bundle.getVersion()
-                .flatMap(version -> validateSync(bundle, () -> version, "version", metadata.getVersion()))
-                .ifPresent(issues::add);
 
         validateLanguages(bundle, metadata.getI18nLanguages()).ifPresent(issues::add);
 
@@ -122,20 +115,24 @@ public class BundlesLoader {
         return issues;
     }
 
-    @SuppressWarnings("DuplicatedCode")  // Refactoring would make the code much less readable
+    private List<ValidationException> validateDipMetadata(FsBundle bundle, DipMetadata metadata) {
+        List<ValidationException> issues = validateCommonMetadata(bundle, metadata);
+
+        validateFormat(bundle, ID_PATTERN, "id", metadata.getId()).ifPresent(issues::add);
+        validateFormat(bundle, VERSION_PATTERN, "version", metadata.getVersion()).ifPresent(issues::add);
+
+        validateSync(bundle, bundle::getId, "id", metadata.getId()).ifPresent(issues::add);
+        bundle.getVersion()
+                .flatMap(version -> validateSync(bundle, () -> version, "version", metadata.getVersion()))
+                .ifPresent(issues::add);
+
+        return issues;
+    }
+
     private List<ValidationException> validateHttpMetadata(FsBundle bundle, HttpMetadata metadata) {
-        List<ValidationException> issues = new ArrayList<>();
+        List<ValidationException> issues = validateCommonMetadata(bundle, metadata);
 
-        validateFormat(bundle, DATE_PATTERN, "created", metadata.getCreated()).ifPresent(issues::add);
-        validateFormat(bundle, VERSION_PATTERN, "masVersion", metadata.getMasVersion()).ifPresent(issues::add);
-
-        validateSync(bundle, bundle::getType, "type", metadata.getType()).ifPresent(issues::add);
-        validateSync(bundle, bundle::getVendor, "vendor", metadata.getVendor()).ifPresent(issues::add);
         validateSync(bundle, bundle::getId, "id", metadata.getId().toString()).ifPresent(issues::add);
-
-        validateLanguages(bundle, metadata.getI18nLanguages()).ifPresent(issues::add);
-
-        // TODO: Rules for other validations.
 
         return issues;
     }

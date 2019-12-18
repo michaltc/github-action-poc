@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class App {
     private final UUID uuid;
     private final String title;
-    private final boolean action;
+    private final boolean action;  // TODO: Tech. spec. names it `isAction` and possibly optional, is rename ok?
 
     @JsonCreator
     public App(
