@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import static com.citrix.microapps.bundlegen.TestUtils.path;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,8 +68,12 @@ class ArchiveBuilderTest {
         );
 
         assertAll(
-                () -> assertEquals("7ea289396d9ae1526a74160a3d6a0ba1", BundlesArchiver.md5Hex(content),
-                        "Produced zip should be always exactly same on byte level"),
+                () -> assertThat(BundlesArchiver.md5Hex(content)).satisfiesAnyOf(
+                        hash -> assertEquals("7ea289396d9ae1526a74160a3d6a0ba1", hash, // UNIX
+                                "Produced zip should be always exactly same on byte level"),
+                        hash -> assertEquals("2e66074ce1e973c49654770a888f0c72", hash, // WINDOWS
+                                "Produced zip should be always exactly same on byte level")
+                ),
                 () -> assertEquals(expectedEntries, listEntriesInZip(content))
         );
     }

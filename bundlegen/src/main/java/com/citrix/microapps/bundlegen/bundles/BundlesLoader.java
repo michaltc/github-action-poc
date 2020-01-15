@@ -17,7 +17,6 @@ import com.citrix.microapps.bundlegen.pojo.DipMetadata;
 import com.citrix.microapps.bundlegen.pojo.HttpMetadata;
 import com.citrix.microapps.bundlegen.pojo.Metadata;
 import com.citrix.microapps.bundlegen.pojo.Type;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
@@ -30,10 +29,7 @@ public class BundlesLoader {
     private static final Logger logger = LoggerFactory.getLogger(BundlesLoader.class);
 
     private static final ObjectReader METADATA_READER = new ObjectMapper()
-            .reader()
-            .with(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-            .with(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES)
-            .with(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES);
+            .reader();
 
     // e.g. `id: "com.sapho.services.salesforce.SalesforceService"`
     private static final Pattern ID_PATTERN = Pattern.compile("[a-zA-Z0-9]+(?:\\.[a-zA-Z0-9]+)*");
@@ -44,7 +40,7 @@ public class BundlesLoader {
 
     // e.g. `version: "2.5.0"`
     // e.g. `masVersion: "0.8.0"`
-    private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(?:\\.[0-9]+)*");
+    private static final Pattern VERSION_PATTERN = Pattern.compile("[0-9]+(?:\\.[0-9]+)*(-SNAPSHOT)?");
 
     public Bundle loadBundle(FsBundle bundle) {
         logger.info("Loading bundle: {}", bundle);

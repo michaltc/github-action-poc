@@ -14,7 +14,7 @@ public class FsConstants {
     public static final String DIP_DIR = "dip";
     public static final String HTTP_DIR = "http";
     public static final String METADATA_FILE = "metadata.json";
-    public static final String TEMPLATE_FILE = "template.sapp";
+    public static final String TEMPLATE_FILE = "file.sapp";
     public static final String TRANSLATIONS_DIR = "i18n";
     public static final String TRANSLATION_EXTENSION = ".json";
 
@@ -42,6 +42,7 @@ public class FsConstants {
             Paths.get(TRANSLATIONS_DIR, "fr.json"),
             Paths.get(TRANSLATIONS_DIR, "ja.json"),
             Paths.get(TRANSLATIONS_DIR, "nl.json"),
-            Paths.get(TRANSLATIONS_DIR, "zh-CN.json")
+            Paths.get(TRANSLATIONS_DIR, "zh-CN.json"),
+            Paths.get(TRANSLATIONS_DIR, "pt-BR.json")
     )));
 }

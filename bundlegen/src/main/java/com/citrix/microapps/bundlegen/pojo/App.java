@@ -8,15 +8,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class App {
     private final UUID uuid;
     private final String title;
-    private final boolean action;  // TODO: Tech. spec. names it `isAction` and possibly optional, is rename ok?
+    private final boolean action;
     private final int numberOfEvents;
 
     @JsonCreator
     public App(
             @JsonProperty(value = "uuid", required = true) UUID uuid,
             @JsonProperty(value = "title", required = true) String title,
-            @JsonProperty(value = "action", required = true) boolean action,
-            @JsonProperty(value = "numberOfEvents", required = true) int numberOfEvents
+            @JsonProperty(value = "action") boolean action,
+            @JsonProperty(value = "numberOfEvents") int numberOfEvents
     ) {
         this.uuid = uuid;
         this.title = title;

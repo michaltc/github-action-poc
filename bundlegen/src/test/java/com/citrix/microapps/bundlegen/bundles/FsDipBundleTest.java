@@ -38,7 +38,7 @@ class FsDipBundleTest {
                         bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles" +
                                 "/blob/master/bundles/archives"))),
                 () -> assertEquals(Paths.get("test/dip/vendor/id/version/metadata.json"), bundle.getMetadataPath()),
-                () -> assertEquals("test/dip/vendor/id/version", bundle.toString()),
+                () -> assertEquals(Paths.get("test/dip/vendor/id/version").toString(), bundle.toString()),
                 () -> assertEquals(Collections.singletonList(Paths.get("test.txt")), bundle.getFiles())
         );
     }

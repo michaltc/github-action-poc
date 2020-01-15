@@ -25,7 +25,8 @@
   ],
   "vaResolvers": [
     {
-      "uuid": "7c1f851b-41bb-4fc6-8356-57fc7281744f"
+      "name": "7c1f851b-41bb-4fc6-8356-57fc7281744f",
+      "intentName": "intent12345"
     }
   ],
   "tags": [

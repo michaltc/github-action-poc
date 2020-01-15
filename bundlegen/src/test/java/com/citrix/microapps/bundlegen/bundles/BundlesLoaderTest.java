@@ -24,6 +24,7 @@ import static com.citrix.microapps.bundlegen.bundles.FsConstants.BUNDLE_ALLOWED_
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.BUNDLE_MANDATORY_FILES;
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.METADATA_FILE;
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.TEMPLATE_FILE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BundlesLoaderTest {
@@ -77,7 +78,7 @@ class BundlesLoaderTest {
     @MethodSource("checkMandatoryFilesIssuesProvider")
     void checkMandatoryFilesIssues(List<Path> input, List<String> expectedMessages) {
         List<ValidationException> issues = BundlesLoader.checkMandatoryFiles(input);
-        assertEquals(expectedMessages, toMessages(issues));
+        assertThat(toMessages(issues)).containsExactlyInAnyOrder(expectedMessages.toArray(new String[0]));
     }
 
 
