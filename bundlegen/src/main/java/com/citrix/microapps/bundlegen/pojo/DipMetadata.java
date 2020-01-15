@@ -20,16 +20,16 @@ public class DipMetadata extends Metadata {
             @JsonProperty(value = "id", required = true) String id,
             @JsonProperty(value = "version", required = true) String version,
             @JsonProperty(value = "title", required = true) String title,
-            @JsonProperty(value = "description", required = true) String description,
+            @JsonProperty(value = "description") String description,
             @JsonProperty(value = "iconUrl", required = true) URI iconUrl,
             @JsonProperty(value = "masVersion", required = true) String masVersion,
             @JsonProperty(value = "categories", required = true) List<Category> categories,
             @JsonProperty(value = "created", required = true) String created,
-            @JsonProperty(value = "supportsOAuthForActions", required = true) boolean supportsOAuthForActions,
-            @JsonProperty(value = "i18nLanguages", required = true) List<String> i18nLanguages,
-            @JsonProperty(value = "apps", required = true) List<App> apps,
-            @JsonProperty(value = "vaResolvers", required = true) List<VaResolver> vaResolvers,
-            @JsonProperty(value = "tags", required = true) List<Tag> tags
+            @JsonProperty(value = "supportsOAuthForActions") boolean supportsOAuthForActions,
+            @JsonProperty(value = "i18nLanguages") List<String> i18nLanguages,
+            @JsonProperty(value = "apps") List<App> apps,
+            @JsonProperty(value = "vaResolvers") List<VaResolver> vaResolvers,
+            @JsonProperty(value = "tags") List<Tag> tags
     ) {
         super(type,
                 vendor,

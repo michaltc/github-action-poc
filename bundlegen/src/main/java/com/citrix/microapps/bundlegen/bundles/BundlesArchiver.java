@@ -88,7 +88,8 @@ public class BundlesArchiver {
     private void addToArchive(ZipOutputStream zipStream, String archiveName, Path topDirectory, Path file) {
         try {
             String relativePath = archiveName + "/" + topDirectory.relativize(file);
-
+            // Preserve the unix separator inside the archive to have single tests to work even on Windows.
+            relativePath = relativePath.replace('\\', '/');
             // Git unfortunately doesn't preserve the times, it uses current time on checkout of every file it modifies.
             // Current time would be used in zip if the times were not defined, see putNextEntry(). `git log` can be
             // used to get the timestamps if really needed.

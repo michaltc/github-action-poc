@@ -10,7 +10,9 @@ import org.junit.jupiter.api.Test;
 
 import com.citrix.microapps.bundlegen.pojo.Type;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 class FsHttpBundleTest {
     @Test
@@ -29,14 +31,16 @@ class FsHttpBundleTest {
                         bundle.getArchivePath(Paths.get("somewhere", "archives"))),
                 () -> assertEquals(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob/master" +
                                 "/bundles/archives/vendor/vendor_id.zip"),
-                        bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
+                        bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles" +
+                                "/blob" +
                                 "/master/bundles/archives/"))),
                 () -> assertEquals(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob/master" +
                                 "/bundles/archives/vendor/vendor_id.zip"),
-                        bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles/blob" +
+                        bundle.getDownloadUrl(URI.create("https://github.com/michaltc/workspace-microapps-bundles" +
+                                "/blob" +
                                 "/master/bundles/archives"))),
                 () -> assertEquals(Paths.get("test/http/vendor/id/metadata.json"), bundle.getMetadataPath()),
-                () -> assertEquals("test/http/vendor/id", bundle.toString()),
+                () -> assertEquals(Paths.get("test/http/vendor/id").toString(), bundle.toString()),
                 () -> assertEquals(Collections.singletonList(Paths.get("test.txt")), bundle.getFiles())
         );
     }
