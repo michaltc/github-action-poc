@@ -9,16 +9,19 @@ public class App {
     private final UUID uuid;
     private final String title;
     private final boolean action;  // TODO: Tech. spec. names it `isAction` and possibly optional, is rename ok?
+    private final int numberOfEvents;
 
     @JsonCreator
     public App(
             @JsonProperty(value = "uuid", required = true) UUID uuid,
             @JsonProperty(value = "title", required = true) String title,
-            @JsonProperty(value = "action", required = true) boolean action
+            @JsonProperty(value = "action", required = true) boolean action,
+            @JsonProperty(value = "numberOfEvents", required = true) int numberOfEvents
     ) {
         this.uuid = uuid;
         this.title = title;
         this.action = action;
+        this.numberOfEvents = numberOfEvents;
     }
 
     public UUID getUuid() {
@@ -31,5 +34,9 @@ public class App {
 
     public boolean isAction() {
         return action;
+    }
+
+    public int getNumberOfEvents() {
+        return numberOfEvents;
     }
 }
