@@ -1,0 +1,30 @@
+{
+  "type" : "DIP",
+  "vendor" : "Citrix",
+  "id" : "com.sapho.services.jira.JiraService",
+  "version" : "0.2.3",
+  "title" : "JIRA integration",
+  "description" : "Lets you build a mobile app connected to your JIRA instance.",
+  "iconUrl" : "https://ctx-ws-cdn.cloud.com/assets/microapps/exported/JIRA.35cdd2008e8e83479745e5635da3d7f1.svg",
+  "masVersion" : "1.2.18-SNAPSHOT",
+  "categories" : [ "WEB_SERVICES" ],
+  "created" : "2020-01-21T11:40:09",
+  "supportsOAuthForActions" : true,
+  "i18nLanguages" : [ "de", "en", "es", "fr", "ja", "nl", "pt-BR", "zh-CN" ],
+  "apps" : [ {
+    "uuid" : "46a8c3f5-5d7f-4c80-9b05-bb77f48cfae5",
+    "title" : "Tickets",
+    "numberOfEvents" : 9,
+    "action" : true
+  }, {
+    "uuid" : "9a5518f0-ac8d-47f8-bd57-56bb7bce1775",
+    "title" : "Create Ticket",
+    "numberOfEvents" : 0,
+    "action" : true
+  } ],
+  "vaResolvers" : [ ],
+  "tags" : [ {
+    "tag" : "helpUrl",
+    "value" : "https://docs.citrix.com/en-us/citrix-microapps/set-up-template-integrations/integrate-jira.html"
+  } ]
+}
