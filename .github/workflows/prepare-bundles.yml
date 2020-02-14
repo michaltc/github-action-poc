@@ -1,5 +1,6 @@
 name: Prepare bundles
-on: [push, pull_request]
+on:
+  push
 env:
   DEST_REPO: michaltc/workspace-microapps-bundles
   DEST_REPO_DIR: ../workspace-microapps-bundles
