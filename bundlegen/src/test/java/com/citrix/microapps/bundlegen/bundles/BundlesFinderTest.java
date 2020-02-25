@@ -30,6 +30,7 @@ class BundlesFinderTest {
         List<FsBundle> expected = Arrays.asList(
                 new FsDipBundle(path("src/test/resources/bundles/dip/vendor1/bundle1/0.0.1"),
                         Arrays.asList(
+                                Paths.get("file.sapp"),
                                 Paths.get("i18n", "de.json"),
                                 Paths.get("i18n", "en.json"),
                                 Paths.get("i18n", "es.json"),

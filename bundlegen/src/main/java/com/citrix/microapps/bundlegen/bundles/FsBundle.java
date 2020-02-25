@@ -9,6 +9,7 @@ import com.citrix.microapps.bundlegen.pojo.Type;
 
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.ARCHIVE_EXTENSION;
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.METADATA_FILE;
+import static com.citrix.microapps.bundlegen.bundles.FsConstants.TEMPLATE_FILE;
 
 /**
  * Generic bundle located in filesystem.
@@ -47,5 +48,9 @@ public interface FsBundle {
 
     default Path getMetadataPath() {
         return getPath().resolve(METADATA_FILE);
+    }
+
+    default Path getTemplatePath() {
+        return getPath().resolve(TEMPLATE_FILE);
     }
 }

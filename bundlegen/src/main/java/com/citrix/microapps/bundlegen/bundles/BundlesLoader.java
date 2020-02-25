@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -16,10 +17,13 @@ import org.slf4j.LoggerFactory;
 import com.citrix.microapps.bundlegen.pojo.DipMetadata;
 import com.citrix.microapps.bundlegen.pojo.HttpMetadata;
 import com.citrix.microapps.bundlegen.pojo.Metadata;
+import com.citrix.microapps.bundlegen.pojo.ModelTranslation;
+import com.citrix.microapps.bundlegen.pojo.TemplateFile;
 import com.citrix.microapps.bundlegen.pojo.Type;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 
+import static com.citrix.microapps.bundlegen.bundles.FsConstants.BUNDLE_ALLOWED_TRANSLATIONS;
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.TRANSLATION_EXTENSION;
 
 /**
@@ -28,7 +32,7 @@ import static com.citrix.microapps.bundlegen.bundles.FsConstants.TRANSLATION_EXT
 public class BundlesLoader {
     private static final Logger logger = LoggerFactory.getLogger(BundlesLoader.class);
 
-    private static final ObjectReader METADATA_READER = new ObjectMapper()
+    private static final ObjectReader BUNDLE_DATA_READER = new ObjectMapper()
             .reader();
 
     // e.g. `id: "com.sapho.services.salesforce.SalesforceService"`
@@ -48,6 +52,7 @@ public class BundlesLoader {
 
         issues.addAll(checkMandatoryFiles(bundle.getFiles()));
         issues.addAll(checkUnexpectedFiles(bundle.getFiles()));
+        issues.addAll(checkLocalizations(bundle));
 
         Optional<Metadata> metadata = loadAndValidateMetadata(issues, bundle);
         return new Bundle(bundle, metadata, issues);
@@ -59,14 +64,14 @@ public class BundlesLoader {
         try {
             switch (bundle.getType()) {
                 case DIP:
-                    DipMetadata dipMetadata = METADATA_READER
+                    DipMetadata dipMetadata = BUNDLE_DATA_READER
                             .forType(DipMetadata.class)
                             .readValue(metadataPath.toFile());
                     issues.addAll(validateDipMetadata(bundle, dipMetadata));
                     return Optional.of(dipMetadata);
 
                 case HTTP:
-                    HttpMetadata httpMetadata = METADATA_READER
+                    HttpMetadata httpMetadata = BUNDLE_DATA_READER
                             .forType(HttpMetadata.class)
                             .readValue(metadataPath.toFile());
                     issues.addAll(validateHttpMetadata(bundle, httpMetadata));
@@ -77,6 +82,35 @@ public class BundlesLoader {
             }
         } catch (IOException e) {
             issues.add(new ValidationException("Loading of bundle metadata failed: " + metadataPath, e));
+            return Optional.empty();
+        }
+    }
+
+    private static Optional<TemplateFile> loadAndValidateTemplateFile(List<ValidationException> issues,
+                                                                      FsBundle bundle) {
+        Path templateFilePath = bundle.getTemplatePath();
+
+        try {
+            TemplateFile templateFile = BUNDLE_DATA_READER
+                    .forType(TemplateFile.class)
+                    .readValue(templateFilePath.toFile());
+            isChecksumEmpty(templateFile).ifPresent(issues::add);
+            return Optional.of(templateFile);
+        } catch (IOException e) {
+            issues.add(new ValidationException("Loading of template file failed: " + templateFilePath, e));
+            return Optional.empty();
+        }
+    }
+
+    private static Optional<ModelTranslation> loadTranslationFile(List<ValidationException> issues,
+                                                                  Path translationPath) {
+        try {
+            ModelTranslation modelTranslation = BUNDLE_DATA_READER
+                    .forType(ModelTranslation.class)
+                    .readValue(translationPath.toFile());
+            return Optional.of(modelTranslation);
+        } catch (IOException e) {
+            issues.add(new ValidationException("Loading of translation file failed: " + translationPath, e));
             return Optional.empty();
         }
     }
@@ -96,6 +130,28 @@ public class BundlesLoader {
         return copy.stream()
                 .map(path -> new ValidationException("Unexpected file: " + path))
                 .collect(Collectors.toList());
+    }
+
+    static List<ValidationException> checkLocalizations(FsBundle bundle) {
+        List<ValidationException> issues = new ArrayList<>();
+        loadAndValidateTemplateFile(issues, bundle)
+                .ifPresent(template ->
+                        bundle.getFiles().stream()
+                                .filter(path -> BUNDLE_ALLOWED_TRANSLATIONS.contains(path))
+                                .forEach(translationPath ->
+                                        loadTranslationFile(issues, bundle.getPath().resolve(translationPath))
+                                                .filter(modelTranslation ->
+                                                        !Objects.equals(
+                                                                new TranslationValidator(modelTranslation).checksum(),
+                                                                template.getTranslationChecksum()))
+                                                .ifPresent(modelTranslation ->
+                                                        issues.add(new ValidationException(
+                                                                String.format("Bundle has changed translation keys %s",
+                                                                        translationPath.getFileName())))
+                                                )
+                                )
+                );
+        return issues;
     }
 
     private static List<ValidationException> validateCommonMetadata(FsBundle bundle, Metadata metadata) {
@@ -146,6 +202,11 @@ public class BundlesLoader {
         validateSync(bundle::getId, "id", metadata.getId().toString()).ifPresent(issues::add);
 
         return issues;
+    }
+
+    static Optional<ValidationException> isChecksumEmpty(TemplateFile templateFile) {
+        return templateFile.getTranslationChecksum() == null || templateFile.getTranslationChecksum().isEmpty() ?
+                Optional.of(new ValidationException("Missing the translation checksum")) : Optional.empty();
     }
 
     /**
