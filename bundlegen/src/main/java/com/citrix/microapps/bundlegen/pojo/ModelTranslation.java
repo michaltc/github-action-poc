@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class ModelTranslation {
 
-    private Map<String, Map<String, String>> appTranslations;
+    private final Map<String, Map<String, String>> appTranslations;
 
     @JsonCreator
     public ModelTranslation(Map<String, Map<String, String>> appTranslations) {
@@ -15,10 +15,6 @@ public class ModelTranslation {
 
     public Map<String, Map<String, String>> getAppTranslations() {
         return appTranslations;
-    }
-
-    public void setAppTranslations(Map<String, Map<String, String>> translations) {
-        this.appTranslations = translations;
     }
 
 }

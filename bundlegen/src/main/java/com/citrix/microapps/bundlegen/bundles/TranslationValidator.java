@@ -1,7 +1,6 @@
 package com.citrix.microapps.bundlegen.bundles;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -23,18 +22,18 @@ public class TranslationValidator {
     // Sonar: Hashing data is security-sensitive.
     // MD5 is used only to create a checksum of keys in translation files
     @SuppressWarnings("squid:S4790")
-    public String checksum() {
+    public Optional<String> checksum() {
         StringBuilder builder = new StringBuilder();
         if (modelTranslation.getAppTranslations().isEmpty()) {
-            return null;
+            return Optional.empty();
         }
 
         modelTranslation.getAppTranslations()
-                .keySet()
+                .entrySet()
                 .stream()
-                .map(appId ->
-                        DigestUtils.md5Hex(format("%s-%s", appId,
-                                getAppTranslations(appId)
+                .map(entry ->
+                        DigestUtils.md5Hex(format("%s-%s", entry.getKey(),
+                                entry.getValue()
                                         .keySet()
                                         .stream()
                                         .sorted()
@@ -43,12 +42,8 @@ public class TranslationValidator {
                 .forEach(builder::append);
 
         builder.append(TRANSLATION_CHECKSUM_PAD);
-        return DigestUtils
+        return Optional.of(DigestUtils
                 .md5Hex(builder.toString())
-                .toUpperCase();
-    }
-
-    private Map<String, String> getAppTranslations(String appId) {
-        return modelTranslation.getAppTranslations().computeIfAbsent(appId, id -> new HashMap<>());
+                .toUpperCase());
     }
 }

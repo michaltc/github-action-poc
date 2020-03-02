@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TemplateFile {
 
-    private String translationChecksum;
+    private final String translationChecksum;
 
     @JsonCreator
     public TemplateFile(
@@ -19,8 +19,4 @@ public class TemplateFile {
         return translationChecksum;
     }
 
-    public TemplateFile setTranslationChecksum(String translationChecksum) {
-        this.translationChecksum = translationChecksum;
-        return this;
-    }
 }

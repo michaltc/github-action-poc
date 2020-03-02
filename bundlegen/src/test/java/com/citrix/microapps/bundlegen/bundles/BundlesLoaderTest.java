@@ -113,7 +113,7 @@ class BundlesLoaderTest {
                                 Paths.get("file.sapp")));
 
         List<ValidationException> validationExceptions = BundlesLoader.checkLocalizations(fsDipBundle);
-        assertEquals(Collections.singletonList("Bundle has changed translation keys en.json"),
+        assertEquals(Collections.singletonList("Translation checksum mismatch en.json"),
                 toMessages(validationExceptions));
     }
 

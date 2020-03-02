@@ -73,6 +73,7 @@ class ArchiveBuilderTest {
                 () -> assertThat(BundlesArchiver.md5Hex(content)).satisfiesAnyOf(
                         hash -> assertEquals("488a6431b096ec9bacbfb4e2bc0ed8a1", hash, // UNIX
                                 "Produced zip should be always exactly same on byte level"),
+                        //expected hash value is outdated for Windows platform
                         hash -> assertEquals("2e66074ce1e973c49654770a888f0c72", hash, // WINDOWS
                                 "Produced zip should be always exactly same on byte level")
                 ),

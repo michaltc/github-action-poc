@@ -1,15 +1,16 @@
 package com.citrix.microapps.bundlegen.bundles;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.BUNDLE_ALLOWED_TRANSLATIONS;
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.TRANSLATION_EXTENSION;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Loader and validator of bundles.
@@ -91,10 +93,11 @@ public class BundlesLoader {
         Path templateFilePath = bundle.getTemplatePath();
 
         try {
+            File file = templateFilePath.toFile();
             TemplateFile templateFile = BUNDLE_DATA_READER
                     .forType(TemplateFile.class)
-                    .readValue(templateFilePath.toFile());
-            isChecksumEmpty(templateFile).ifPresent(issues::add);
+                    .readValue(file);
+            isChecksumEmpty(file.getName(), templateFile).ifPresent(issues::add);
             return Optional.of(templateFile);
         } catch (IOException e) {
             issues.add(new ValidationException("Loading of template file failed: " + templateFilePath, e));
@@ -120,7 +123,7 @@ public class BundlesLoader {
                 .stream()
                 .filter(path -> !bundleFiles.contains(path))
                 .map(path -> new ValidationException("Missing mandatory file: " + path))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     static List<ValidationException> checkUnexpectedFiles(List<Path> bundleFiles) {
@@ -129,29 +132,38 @@ public class BundlesLoader {
 
         return copy.stream()
                 .map(path -> new ValidationException("Unexpected file: " + path))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     static List<ValidationException> checkLocalizations(FsBundle bundle) {
         List<ValidationException> issues = new ArrayList<>();
-        loadAndValidateTemplateFile(issues, bundle)
-                .ifPresent(template ->
-                        bundle.getFiles().stream()
-                                .filter(path -> BUNDLE_ALLOWED_TRANSLATIONS.contains(path))
-                                .forEach(translationPath ->
-                                        loadTranslationFile(issues, bundle.getPath().resolve(translationPath))
-                                                .filter(modelTranslation ->
-                                                        !Objects.equals(
-                                                                new TranslationValidator(modelTranslation).checksum(),
-                                                                template.getTranslationChecksum()))
-                                                .ifPresent(modelTranslation ->
-                                                        issues.add(new ValidationException(
-                                                                String.format("Bundle has changed translation keys %s",
-                                                                        translationPath.getFileName())))
-                                                )
-                                )
-                );
+        List<ValidationException> checksumIssues = loadAndValidateTemplateFile(issues, bundle).map(template ->
+                bundle.getFiles().stream()
+                        .filter(path -> BUNDLE_ALLOWED_TRANSLATIONS.contains(path))
+                        .map(path -> toValidationException(bundle, template, issues, path))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .collect(toList())
+        ).orElse(Collections.emptyList());
+
+        issues.addAll(checksumIssues);
         return issues;
+    }
+
+    private static Optional<ValidationException> toValidationException(FsBundle bundle,
+                                                                       TemplateFile template,
+                                                                       List<ValidationException> issues,
+                                                                       Path path) {
+        return loadTranslationFile(issues, bundle.getPath().resolve(path))
+                .filter(modelTranslation -> isTranslationValid(template, modelTranslation))
+                .map(modelTranslation ->
+                        new ValidationException(String.format("Translation checksum mismatch %s", path.getFileName())));
+    }
+
+    private static boolean isTranslationValid(TemplateFile template, ModelTranslation modelTranslation) {
+        return new TranslationValidator(modelTranslation).checksum()
+                .map(checksum -> !Objects.equals(checksum, template.getTranslationChecksum()))
+                .orElse(false);
     }
 
     private static List<ValidationException> validateCommonMetadata(FsBundle bundle, Metadata metadata) {
@@ -204,9 +216,10 @@ public class BundlesLoader {
         return issues;
     }
 
-    static Optional<ValidationException> isChecksumEmpty(TemplateFile templateFile) {
+    static Optional<ValidationException> isChecksumEmpty(String fileName, TemplateFile templateFile) {
         return templateFile.getTranslationChecksum() == null || templateFile.getTranslationChecksum().isEmpty() ?
-                Optional.of(new ValidationException("Missing the translation checksum")) : Optional.empty();
+                Optional.of(new ValidationException(
+                        String.format("Missing the translation checksum %s", fileName))) : Optional.empty();
     }
 
     /**
@@ -240,7 +253,7 @@ public class BundlesLoader {
         List<String> languagesMetadata = languages
                 .stream()
                 .sorted()
-                .collect(Collectors.toList());
+                .collect(toList());
 
         List<String> languagesFs = bundle.getFiles()
                 .stream()
@@ -249,7 +262,7 @@ public class BundlesLoader {
                 .map(path -> path.getFileName().toString())
                 .filter(fileName -> fileName.endsWith(TRANSLATION_EXTENSION))
                 .map(fileName -> fileName.replace(TRANSLATION_EXTENSION, ""))
-                .collect(Collectors.toList());
+                .collect(toList());
 
         if (!languagesMetadata.equals(languagesFs)) {
             return validationIssue(
