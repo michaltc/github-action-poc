@@ -32,7 +32,8 @@ class ArchiveBuilderTest {
             Paths.get("i18n", "ja.json"),
             Paths.get("i18n", "nl.json"),
             Paths.get("i18n", "zh-CN.json"),
-            Paths.get("metadata.json")
+            Paths.get("metadata.json"),
+            Paths.get("file.sapp")
     );
 
     private static final FsBundle TEST_BUNDLE =
@@ -64,13 +65,15 @@ class ArchiveBuilderTest {
                 "vendor1_bundle1_0.0.1/i18n/ja.json",
                 "vendor1_bundle1_0.0.1/i18n/nl.json",
                 "vendor1_bundle1_0.0.1/i18n/zh-CN.json",
-                "vendor1_bundle1_0.0.1/metadata.json"
+                "vendor1_bundle1_0.0.1/metadata.json",
+                "vendor1_bundle1_0.0.1/file.sapp"
         );
 
         assertAll(
                 () -> assertThat(BundlesArchiver.md5Hex(content)).satisfiesAnyOf(
-                        hash -> assertEquals("7ea289396d9ae1526a74160a3d6a0ba1", hash, // UNIX
+                        hash -> assertEquals("488a6431b096ec9bacbfb4e2bc0ed8a1", hash, // UNIX
                                 "Produced zip should be always exactly same on byte level"),
+                        //expected hash value is outdated for Windows platform
                         hash -> assertEquals("2e66074ce1e973c49654770a888f0c72", hash, // WINDOWS
                                 "Produced zip should be always exactly same on byte level")
                 ),

@@ -12,6 +12,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -20,6 +21,7 @@ import com.citrix.microapps.bundlegen.pojo.DipMetadata;
 import com.citrix.microapps.bundlegen.pojo.HttpMetadata;
 import com.citrix.microapps.bundlegen.pojo.Type;
 
+import static com.citrix.microapps.bundlegen.TestUtils.path;
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.BUNDLE_ALLOWED_FILES;
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.BUNDLE_MANDATORY_FILES;
 import static com.citrix.microapps.bundlegen.bundles.FsConstants.METADATA_FILE;
@@ -44,8 +46,8 @@ class BundlesLoaderTest {
     private static Stream<Arguments> checkMandatoryFilesOkProvider() {
         return Stream.of(
                 Arguments.of(new ArrayList<>(BUNDLE_MANDATORY_FILES)),
-                Arguments.of(toPaths(METADATA_FILE, TEMPLATE_FILE)),
-                Arguments.of(toPaths(METADATA_FILE, TEMPLATE_FILE, "more.txt", "files.bin"))
+                Arguments.of(toPaths(METADATA_FILE, TEMPLATE_FILE, "i18n/en.json")),
+                Arguments.of(toPaths(METADATA_FILE, TEMPLATE_FILE, "i18n/en.json", "more.txt", "files.bin"))
         );
     }
 
@@ -60,17 +62,21 @@ class BundlesLoaderTest {
         return Stream.of(
                 Arguments.of(toPaths(),
                         Arrays.asList("Missing mandatory file: metadata.json",
-                                "Missing mandatory file: file.sapp")),
+                                "Missing mandatory file: file.sapp",
+                                "Missing mandatory file: i18n/en.json")),
 
                 Arguments.of(toPaths(METADATA_FILE),
-                        Collections.singletonList("Missing mandatory file: file.sapp")),
+                        Arrays.asList("Missing mandatory file: file.sapp",
+                                "Missing mandatory file: i18n/en.json")),
 
                 Arguments.of(toPaths(TEMPLATE_FILE),
-                        Collections.singletonList("Missing mandatory file: metadata.json")),
+                        Arrays.asList("Missing mandatory file: metadata.json",
+                                "Missing mandatory file: i18n/en.json")),
 
                 Arguments.of(toPaths("other.txt", "files.bin"),
                         Arrays.asList("Missing mandatory file: metadata.json",
-                                "Missing mandatory file: file.sapp"))
+                                "Missing mandatory file: file.sapp",
+                                "Missing mandatory file: i18n/en.json"))
         );
     }
 
@@ -81,6 +87,35 @@ class BundlesLoaderTest {
         assertThat(toMessages(issues)).containsExactlyInAnyOrder(expectedMessages.toArray(new String[0]));
     }
 
+    @Test
+    void checkTranslationChecksumOk() {
+        FsDipBundle fsDipBundle = new FsDipBundle(path("src/test/resources/bundles/dip/vendor1/bundle1/0.0.1"),
+                Arrays.asList(
+                        Paths.get("i18n", "de.json"),
+                        Paths.get("i18n", "en.json"),
+                        Paths.get("i18n", "es.json"),
+                        Paths.get("i18n", "fr.json"),
+                        Paths.get("i18n", "ja.json"),
+                        Paths.get("i18n", "nl.json"),
+                        Paths.get("i18n", "zh-CN.json"),
+                        Paths.get("file.sapp")));
+
+        assertEquals(Collections.emptyList(), BundlesLoader.checkLocalizations(fsDipBundle));
+    }
+
+    @Test
+    void checkTranslationWithIncreasedNumberOfTranslationKeys() {
+        FsDipBundle fsDipBundle =
+                new FsDipBundle(path("src/test/resources/bundles_broken_translation_keys/dip/vendor/bundle/0.0.1"),
+                        Arrays.asList(
+                                Paths.get("i18n", "de.json"),
+                                Paths.get("i18n", "en.json"),
+                                Paths.get("file.sapp")));
+
+        List<ValidationException> validationExceptions = BundlesLoader.checkLocalizations(fsDipBundle);
+        assertEquals(Collections.singletonList("Translation checksum mismatch en.json"),
+                toMessages(validationExceptions));
+    }
 
     private static Stream<Arguments> checkUnexpectedFilesOkProvider() {
         return Stream.of(
